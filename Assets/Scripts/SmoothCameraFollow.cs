@@ -9,6 +9,7 @@ public class SmoothCameraFollow : MonoBehaviour
     private float mAlpha = 1.0f;
     private Color mColor;
     private Transform mThisTransform;
+    
 
     private void Awake()
     {
@@ -23,10 +24,12 @@ public class SmoothCameraFollow : MonoBehaviour
             {
                 Quaternion rotation = Quaternion.LookRotation(PlayerTransform.position - mThisTransform.position);
                 mThisTransform.rotation = Quaternion.Slerp(mThisTransform.rotation, rotation, Time.deltaTime*DampAmount);
+                mThisTransform.position = Vector3.Slerp(transform.position, PlayerTransform.position + new Vector3(0f, (15 - PlayerTransform.position.y), -15.0f), Time.deltaTime*2.0f);
             }
             else
             {
                 mThisTransform.rotation = Quaternion.FromToRotation(-Vector3.forward, (new Vector3(PlayerTransform.position.x, PlayerTransform.position.y, PlayerTransform.position.z) - mThisTransform.position).normalized);
+                mThisTransform.position = Vector3.Slerp(transform.position, PlayerTransform.position + new Vector3(0f, (15 - PlayerTransform.position.y), -15.0f), Time.deltaTime * 2.0f);
 
                 float distance = Vector3.Distance(PlayerTransform.position, mThisTransform.position);
 

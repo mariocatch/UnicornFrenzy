@@ -2,8 +2,8 @@
 
 public class PlayerMovementController : MonoBehaviour
 {
-    private float DestinationDistance;
     public float MovementSpeed;
+    private float mDestinationDistance;
     private Transform mPlayerTransform;
     private Vector3 mTargetDestination;
 
@@ -16,13 +16,13 @@ public class PlayerMovementController : MonoBehaviour
 
     private void Update()
     {
-        DestinationDistance = Vector3.Distance(mTargetDestination, mPlayerTransform.position);
+        mDestinationDistance = Vector3.Distance(mTargetDestination, mPlayerTransform.position);
 
-        if (DestinationDistance < .5f)
+        if (mDestinationDistance < .5f)
         {
             MovementSpeed = 0;
         }
-        else if (DestinationDistance > .5f)
+        else if (mDestinationDistance > .5f)
         {
             MovementSpeed = 3;
         }
@@ -62,7 +62,7 @@ public class PlayerMovementController : MonoBehaviour
         //}
 
         // To prevent code from running if not needed
-        if (DestinationDistance > .5f)
+        if (mDestinationDistance > .5f)
         {
             mPlayerTransform.position = Vector3.MoveTowards(mPlayerTransform.position, mTargetDestination, MovementSpeed*Time.deltaTime);
         }
