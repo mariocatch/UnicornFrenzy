@@ -76,10 +76,11 @@ public class AstarAI : MonoBehaviour {
 		//move character to current waypoint
 		if (!moving) {
 
-			StartCoroutine(move(path.vectorPath [currentWaypoint]));
 
+			iTween.MoveTo(gameObject, path.vectorPath[currentWaypoint] + new Vector3(0, 1, 0), .5f);
+			moving = true;
 				} else if (moving) {
-			if (transform.position == path.vectorPath[currentWaypoint]){
+			if (transform.position == path.vectorPath[currentWaypoint] + new Vector3(0, 1, 0)){
 				moving = false;
 				currentWaypoint++;
 
@@ -87,6 +88,7 @@ public class AstarAI : MonoBehaviour {
 				}
 
 		}
+	
 
 	public IEnumerator move(Vector3 destination) {
 		moving = true;
