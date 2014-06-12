@@ -21,7 +21,7 @@ public class GameController : MonoBehaviour {
 	void Update(){
 
 
-		if (Players [mCurrentPlayer].turnActive == false) {
+		if (Players [mCurrentPlayer].TurnActive == false) {
 
 			mCurrentPlayer++;
 
@@ -38,8 +38,21 @@ public class GameController : MonoBehaviour {
 		if (Input.GetButtonUp ("SpawnPlane")){
 
 			GameObject newPlane = Instantiate(NewPlane, SpawnLocation.position, SpawnLocation.rotation) as GameObject;
-			aStarPath.Scan();
+			ChangeNodeSize (10);
 		}
+
+	}
+
+	void ScanPath(){
+
+		aStarPath.Scan ();
+
+	}
+
+	void ChangeNodeSize(float size){
+
+		aStarPath.astarData.gridGraph.nodeSize = size;
+		ScanPath ();
 
 	}
 
