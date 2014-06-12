@@ -9,9 +9,15 @@ public class AstarAI : MonoBehaviour
     private float mJourneyLength;
     private bool mMoving;
     private Seeker mSeeker;
-    private float mStartTime;
+	private float mStartTime;
+	private float mTurnTime;
+	private GameObject mPlayerTarget;
     public Path path;
+	public int Health;
+	public float AttackRange;
+	public float TurnLimit;
     public Vector3 targetPosition;
+	public bool turnActive, movePhase, attackPhase;
 
     public void Start()
     {
@@ -20,7 +26,20 @@ public class AstarAI : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetMouseButtonDown(0) && GUIUtility.hotControl == 0)
+		if (Health <= 0) {
+
+			print ("I am dead!");
+			Destroy (gameObject);
+
+				}
+
+		/*if (Time.time > mTurnTime) {
+
+			EndTurn ();
+
+				}*/
+
+        if (Input.GetMouseButtonDown(0) && GUIUtility.hotControl == 0 && turnActive && movePhase)
         {
             var playerPlane = new Plane(Vector3.up, transform.position);
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -31,9 +50,58 @@ public class AstarAI : MonoBehaviour
                 Vector3 targetPoint = ray.GetPoint(hitdist);
                 print(targetPoint);
                 MoveCharacter(targetPoint);
+				movePhase = false;
+				attackPhase = true;
             }
         }
+
+		if (attackPhase) {
+
+						if (Input.GetMouseButtonDown (0) && GUIUtility.hotControl == 0 && turnActive && !movePhase) {
+								Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+								RaycastHit hit;
+								if (Physics.Raycast(ray, out hit)) {
+										if (hit.collider.gameObject.tag == "Enemy"){
+
+											mPlayerTarget = hit.collider.gameObject;
+											print ("target aquired!");
+										}
+								}
+
+						}
+
+						if (mPlayerTarget != null && Input.GetButtonDown("Attack") && Vector3.Distance (gameObject.transform.position, mPlayerTarget.transform.position) < AttackRange){
+
+								mPlayerTarget.GetComponent<AstarAI>().Health -= 10;
+								print ("Attacking!");
+								attackPhase = false;
+								mPlayerTarget = null;
+						}
+				}
+
+		if (turnActive && Input.GetMouseButtonDown (1)) {
+
+			EndTurn ();
+
+				}
     }
+
+	public void StartTurn(){
+
+		mTurnTime = Time.time + TurnLimit;
+		turnActive = true;
+		movePhase = true;
+		print ("starting turn!");
+
+		}
+
+	public void EndTurn(){
+
+		turnActive = false;
+		movePhase = false;
+		attackPhase = false;
+		print ("Took too long! Ending turn!");
+		}
 
     public void MoveCharacter(Vector3 target)
     {
@@ -42,7 +110,7 @@ public class AstarAI : MonoBehaviour
 
     public void OnPathComplete(Path p)
     {
-        Debug.Log("Yay, we got a path back. Did it have an error? " + p.error);
+        //Debug.Log("Yay, we got a path back. Did it have an error? " + p.error);
         if (!p.error)
         {
             path = p;
@@ -55,44 +123,30 @@ public class AstarAI : MonoBehaviour
     {
         if (path == null)
         {
-            //We have no path to move after yet
             return;
         }
 
         if (mCurrentWaypoint >= path.vectorPath.Count)
         {
-            Debug.Log("End Of Path Reached");
             return;
         }
-
-        //move character to current waypoint
+		
         if (!mMoving)
         {
-            iTween.MoveTo(gameObject, path.vectorPath[mCurrentWaypoint] + new Vector3(0, 1, 0), .5f);
+            iTween.MoveTo(gameObject, path.vectorPath[mCurrentWaypoint] + new Vector3(0, 1, 0), 2f);
             mMoving = true;
         }
         else if (mMoving)
         {
-            if (transform.position == path.vectorPath[mCurrentWaypoint] + new Vector3(0, 1, 0))
+            if (Vector3.Distance (transform.position, path.vectorPath[mCurrentWaypoint] + new Vector3(0, 1, 0)) < 3f && mCurrentWaypoint < path.vectorPath.Count - 1)
             {
                 mMoving = false;
                 mCurrentWaypoint++;
-            }
-        }
-    }
+            } else if (transform.position == path.vectorPath[mCurrentWaypoint] + new Vector3(0, 1, 0) && mCurrentWaypoint == path.vectorPath.Count -1){
 
-    public IEnumerator move(Vector3 destination)
-    {
-        mMoving = true;
-        float t = 0;
-        Vector3 startPosition = transform.position;
-
-        while (t < 1f)
-        {
-            t += Time.deltaTime*(speed)*5;
-            transform.position = Vector3.Lerp(transform.position, destination, t);
-            yield return null;
+				mMoving= false;
+				mCurrentWaypoint++;
+			}
         }
-        yield return 0;
     }
 }
