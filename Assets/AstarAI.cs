@@ -8,21 +8,22 @@ public class AstarAI : MonoBehaviour {
 	public Vector3 targetPosition;
 
 	private Seeker seeker;
-	private CharacterController controller;
 
 	public Path path;
 
-	public float speed = 1;
+	private float speed = 5;
 
-	public float nextWaypointDistance = 0;
+	private bool moving;
+
+	private float startTime;
+	private float journeyLength;
+	
 
 	private int currentWaypoint = 0;
 
 	public void Start() {
 
 		seeker = GetComponent<Seeker> ();
-		controller = GetComponent<CharacterController> ();
-
 		}
 
 	public void Update(){
@@ -34,6 +35,7 @@ public class AstarAI : MonoBehaviour {
 			
 			if (playerPlane.Raycast(ray, out hitdist)) {
 				Vector3 targetPoint = ray.GetPoint(hitdist);
+				print (targetPoint);
 				MoveCharacter (targetPoint);
 			}
 		}
@@ -61,26 +63,42 @@ public class AstarAI : MonoBehaviour {
 
 	public void FixedUpdate() {
 
-				if (path == null) {
-						return;
+		if (path == null) {
+			//We have no path to move after yet
+			return;
+		}
+		
+		if (currentWaypoint >= path.vectorPath.Count) {
+			Debug.Log ("End Of Path Reached");
+			return;
+		}
+		
+		//move character to current waypoint
+		if (!moving) {
+
+			StartCoroutine(move(path.vectorPath [currentWaypoint]));
+
+				} else if (moving) {
+			if (transform.position == path.vectorPath[currentWaypoint]){
+				moving = false;
+				currentWaypoint++;
+
+			}
 				}
 
-				if (currentWaypoint >= path.vectorPath.Count) {
-						Debug.Log ("End Of Path Reached");
-						return;
-				}
-				//Direction to the next waypoint
-				Vector3 dir = (path.vectorPath [currentWaypoint] - transform.position).normalized;
-				//dir *= speed * Time.fixedDeltaTime;
-				controller.SimpleMove (dir);
-		print ("wtf?");
-		
-				//Check if we are close enough to the next waypoint
-				//If we are, proceed to follow the next waypoint
-				if (Vector3.Distance (transform.position, path.vectorPath [currentWaypoint]) < nextWaypointDistance) {
-						currentWaypoint++;
-						return;
-				}
 		}
 
+	public IEnumerator move(Vector3 destination) {
+		moving = true;
+		float t = 0;
+		Vector3 startPosition = transform.position;
+		
+		while (t < 1f) {
+			t += Time.deltaTime * (speed) * 5;
+			transform.position = Vector3.Lerp(transform.position, destination, t);
+			yield return null;
+		}
+		yield return 0;
+	}
 }
+
