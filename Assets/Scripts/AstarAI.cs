@@ -38,11 +38,11 @@ public class AstarAI : MonoBehaviour
 
 				}
 
-				/*if (Time.time > mTurnTime) {
+				if (Time.time > mTurnTime && TurnActive) {
 
-			EndTurn ();
+						EndTurn ();
 
-				}*/
+				}
 
 				if (Input.GetMouseButtonDown (0) && GUIUtility.hotControl == 0 && TurnActive && MovePhase) {
 						var playerPlane = new Plane (Vector3.up, transform.position);
@@ -87,14 +87,19 @@ public class AstarAI : MonoBehaviour
 
 								mPlayerTarget.GetComponent<AstarAI> ().Health -= 10;
 								print ("Attacking!");
-								AttackPhase = false;
 								mPlayerTarget = null;
+								EndTurn ();
 						}
 				}
 
 				if (TurnActive && Input.GetMouseButtonDown (1)) {
 
-						EndTurn ();
+					if (MovePhase){
+							MovePhase = false;
+							AttackPhase = true;
+					} else {
+							EndTurn ();
+						}
 
 				}
 		}
@@ -102,11 +107,13 @@ public class AstarAI : MonoBehaviour
 		public void StartTurn ()
 		{
 
-				mTurnTime = Time.time + TurnLimit;
+				
 				TurnActive = true;
 				MovePhase = true;
 				print ("starting turn!");
-
+				print (TurnLimit);
+				mTurnTime = Time.time + TurnLimit;
+				print (mTurnTime);
 		}
 
 		public void EndTurn ()
@@ -115,7 +122,7 @@ public class AstarAI : MonoBehaviour
 				TurnActive = false;
 				MovePhase = false;
 				AttackPhase = false;
-				print ("Took too long! Ending turn!");
+				print ("Ending turn!");
 		}
 
 		public void MoveCharacter (Vector3 target)
