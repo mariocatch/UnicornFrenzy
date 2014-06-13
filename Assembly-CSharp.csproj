@@ -118,6 +118,7 @@
      <Compile Include="Assets\Scripts\GameController.cs" />
      <Compile Include="Assets\Scripts\GenerateWorld.cs" />
      <Compile Include="Assets\Scripts\PlayerMovementController.cs" />
+     <Compile Include="Assets\Scripts\RoomPathController.cs" />
      <Compile Include="Assets\Scripts\SmoothCameraFollow.cs" />
      <Compile Include="Assets\Scripts\iTween.cs" />
      <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh2.shader" />

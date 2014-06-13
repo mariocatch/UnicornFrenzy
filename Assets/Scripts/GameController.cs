@@ -9,7 +9,10 @@ public class GameController : MonoBehaviour {
 	public GameObject NewPlane;
 	public Transform SpawnLocation;
 	public AstarPath aStarPath;
+	private float mTimeToScan;
+	private float mScanDelay = 2;
 	private int mCurrentPlayer;
+	private bool mNodesChanged;
 
 
 	void Start(){
@@ -19,6 +22,17 @@ public class GameController : MonoBehaviour {
 		}
 
 	void Update(){
+
+		if (mNodesChanged) {
+
+			if (Time.time > mTimeToScan){
+
+				ScanPath ();
+				mNodesChanged = false;
+
+			}
+
+				}
 
 
 		if (Players [mCurrentPlayer].TurnActive == false) {
@@ -43,16 +57,18 @@ public class GameController : MonoBehaviour {
 
 	}
 
-	void ScanPath(){
+	public void ScanPath(){
 
 		aStarPath.Scan ();
 
 	}
 
-	void ChangeNodeSize(float size){
+	public void ChangeNodeSize(float size){
 
 		aStarPath.astarData.gridGraph.nodeSize = size;
-		ScanPath ();
+		mTimeToScan = Time.time + mScanDelay;
+		mNodesChanged = true;
+
 
 	}
 
