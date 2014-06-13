@@ -5,6 +5,8 @@ using Pathfinding;
 public class GenerateWorld : MonoBehaviour {
 
 	public GameObject Room;
+	public GameObject RoomDX;
+	public GameObject RoomDZ;
 	public GameObject TempFloor;
 	private GameObject StartRoom;
 	public Transform StartPoint;
@@ -17,16 +19,16 @@ public class GenerateWorld : MonoBehaviour {
 
 		mSeeker = GetComponent<Seeker> ();
 		StartRoom = Instantiate(Room, StartPoint.position + new Vector3(Random.Range (-50f, 50f), 0, Random.Range (-50f, 50f)), StartPoint.rotation) as GameObject;
-		Vector3 nextRoom = new Vector3(StartRoom.transform.position.x + Random.Range (-100f, 100f), 0, StartRoom.transform.position.z + Random.Range (-100f, 100f));
+		Vector3 nextRoom = new Vector3(StartRoom.transform.position.x + Random.Range (-150f, 150f), 0, StartRoom.transform.position.z + Random.Range (-150f, 150f));
 		while (!mDistanceCheck){
 
-			if (Vector3.Distance (nextRoom, StartRoom.transform.position) > 60 && nextRoom.x < 100 && nextRoom.x > -100 && nextRoom.z < 100 && nextRoom.z > -100){
+			if (Vector3.Distance (nextRoom, StartRoom.transform.position) > 100 && nextRoom.x < 100 && nextRoom.x > -100 && nextRoom.z < 100 && nextRoom.z > -100){
 
 				mDistanceCheck = true;
 
 			} else {
 
-				nextRoom = new Vector3(StartRoom.transform.position.x + Random.Range (-100f, 100f), 0, StartRoom.transform.position.z + Random.Range (-100f, 100f));
+				nextRoom = new Vector3(StartRoom.transform.position.x + Random.Range (-150f, 150f), 0, StartRoom.transform.position.z + Random.Range (-150f, 150f));
 
 			}
 
@@ -39,7 +41,17 @@ public class GenerateWorld : MonoBehaviour {
 		StartRoom.transform.position = path.vectorPath [0];
 		for (int i = 1; i < path.vectorPath.Count; i++) {
 
-			Instantiate (Room, path.vectorPath[i], StartRoom.transform.rotation);
+			if (i+1 < path.vectorPath.Count){
+			if (path.vectorPath[i].x != path.vectorPath[i-1].x && path.vectorPath[i+1].x != path.vectorPath[i].x ){
+			Instantiate (RoomDX, path.vectorPath[i], StartRoom.transform.rotation);
+			} else if (path.vectorPath[i].z != path.vectorPath[i-1].z && path.vectorPath[i+1].z != path.vectorPath[i].z){
+			Instantiate (RoomDZ, path.vectorPath[i], StartRoom.transform.rotation);
+				} else {
+				Instantiate (Room, path.vectorPath[i], StartRoom.transform.rotation);
+			}
+			} else {
+				Instantiate (Room, path.vectorPath[i], StartRoom.transform.rotation);
+			}
 
 				}
 			Destroy (TempFloor);
