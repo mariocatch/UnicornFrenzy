@@ -43,7 +43,7 @@ public class GenerateWorld : MonoBehaviour {
 
 				}
 			Destroy (TempFloor);
-			Controller.ChangeNodeSize (4);
+			Controller.ChangeNodeSize (2);
 		}
 	
 	public void GeneratePath (Vector3 start, Vector3 target)

@@ -10,7 +10,7 @@ public class GameController : MonoBehaviour {
 	public Transform SpawnLocation;
 	public AstarPath aStarPath;
 	private float mTimeToScan;
-	private float mScanDelay = 2;
+	private float mScanDelay = .5f;
 	private int mCurrentPlayer;
 	private bool mNodesChanged;
 
