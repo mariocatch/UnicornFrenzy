@@ -17,12 +17,14 @@ public class GameController : MonoBehaviour {
 
 	void Start(){
 
+		//Starts the game with the first players turn
 		Players [mCurrentPlayer].StartTurn ();
 
 		}
 
 	void Update(){
 
+		//Checks if the nodes have been changed, waits for a brief moment, then scans the grid.
 		if (mNodesChanged) {
 
 			if (Time.time > mTimeToScan){
@@ -34,7 +36,7 @@ public class GameController : MonoBehaviour {
 
 				}
 
-
+		//Cycles through player turns
 		if (Players [mCurrentPlayer].TurnActive == false) {
 
 			mCurrentPlayer++;
@@ -49,20 +51,16 @@ public class GameController : MonoBehaviour {
 			print (Players.Count);
 				}
 
-		if (Input.GetButtonUp ("SpawnPlane")){
-
-			GameObject newPlane = Instantiate(NewPlane, SpawnLocation.position, SpawnLocation.rotation) as GameObject;
-			ChangeNodeSize (10);
-		}
-
 	}
 
+	//Rescans the pathing grid
 	public void ScanPath(){
 
 		aStarPath.Scan ();
 
 	}
 
+	//Changes the pathing grids node size
 	public void ChangeNodeSize(float size){
 
 		aStarPath.astarData.gridGraph.nodeSize = size;

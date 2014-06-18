@@ -18,8 +18,13 @@ public class GenerateWorld : MonoBehaviour {
 	void Start(){
 
 		mSeeker = GetComponent<Seeker> ();
+
+		//Creates a random 'start' tile from which to branch out
 		StartRoom = Instantiate(Room, StartPoint.position + new Vector3(Random.Range (-50f, 50f), 0, Random.Range (-50f, 50f)), StartPoint.rotation) as GameObject;
+
+		//Creates an 'end point' for the branch path
 		Vector3 nextRoom = new Vector3(StartRoom.transform.position.x + Random.Range (-150f, 150f), 0, StartRoom.transform.position.z + Random.Range (-150f, 150f));
+		//Makes sure the end room doesn't spawn too close
 		while (!mDistanceCheck){
 
 			if (Vector3.Distance (nextRoom, StartRoom.transform.position) > 100 && nextRoom.x < 100 && nextRoom.x > -100 && nextRoom.z < 100 && nextRoom.z > -100){
@@ -33,12 +38,16 @@ public class GenerateWorld : MonoBehaviour {
 			}
 
 		}
+		//Creates the path
 		GeneratePath (StartRoom.transform.position, nextRoom);
 	}
 
 	public void GenerateRooms(){
 
+		//Ensures that the 'startroom' is snapped to the grid
 		StartRoom.transform.position = path.vectorPath [0];
+
+		//Generates rooms point by point along the path, currently using certain rooms depending on position (will need to be largely altered before final use)
 		for (int i = 1; i < path.vectorPath.Count; i++) {
 
 			if (i+1 < path.vectorPath.Count){
@@ -54,6 +63,8 @@ public class GenerateWorld : MonoBehaviour {
 			}
 
 				}
+
+			//Removes the tempfloor (required for creating the path) and changes the nodesize to 2 (for player pathing) then rescans the grid
 			Destroy (TempFloor);
 			Controller.ChangeNodeSize (2);
 		}
@@ -65,21 +76,11 @@ public class GenerateWorld : MonoBehaviour {
 	
 	public void OnPathComplete (Path p)
 	{
-		//Debug.Log("Yay, we got a path back. Did it have an error? " + p.error);
 		if (!p.error) {
 			path = p;
+
+			//Creates rooms along the returned path
 			GenerateRooms();
 		}
 	}
-
-	//Create 'End' Tile
-	//Create a random point X dinstance away, within the grid
-	//Instantiate rooms at each vector along the path
-	//Create another random point, x dinstance away from the current one, and the end point, within the grid
-	//Instantiate rooms at each vector along that path
-	//Instantiate the 'start' room at the end of the path
-	//change the node size from 10 to 4 (aStarPath.astarData.gridGraph.nodeSize = size;)
-	//rescan the map
-	//spawn the players into the start room
-	//begin the game
 }

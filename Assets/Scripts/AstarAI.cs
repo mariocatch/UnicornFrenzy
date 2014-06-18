@@ -28,18 +28,21 @@ public class AstarAI : MonoBehaviour
 
 		public void Update ()
 		{
+				
+				//Sets the display for movement and attack range indicators to only show up during their respective phases
 				MRangeDisplay.enabled = MovePhase;
 				ARangeDisplay.enabled = AttackPhase;
 
 				if (Health <= 0) {
-
+						//Kill the player (temp)
 						print ("I am dead!");
 						Destroy (gameObject);
 
 				}
 
 				if (Time.time > mTurnTime && TurnActive) {
-
+						
+						//Ends the players turn after a certain amount of time
 						EndTurn ();
 
 				}
@@ -49,7 +52,9 @@ public class AstarAI : MonoBehaviour
 						Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 						RaycastHit hit;
 						float hitdist = 0.0f;
-
+						
+						//Casts a ray at the screen position to select a new point to move to
+						//will only navigate to said point if the ground is hit
 						if (Physics.Raycast (ray, out hit)) {
 
 								if (hit.collider.tag == "Ground") {
@@ -70,6 +75,8 @@ public class AstarAI : MonoBehaviour
 
 				if (AttackPhase) {
 
+
+						//Selects a target to attack. Target must be labeled as an enemy.
 						if (Input.GetMouseButtonDown (0) && GUIUtility.hotControl == 0 && TurnActive && !MovePhase) {
 								Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 								RaycastHit hit;
@@ -82,7 +89,8 @@ public class AstarAI : MonoBehaviour
 								}
 
 						}
-
+						
+						//Attacks the currently targeted enemy and ends the turn
 						if (mPlayerTarget != null && Input.GetButtonDown ("Attack") && Vector3.Distance (gameObject.transform.position, mPlayerTarget.transform.position) < AttackRange) {
 
 								mPlayerTarget.GetComponent<AstarAI> ().Health -= 10;
@@ -93,7 +101,7 @@ public class AstarAI : MonoBehaviour
 				}
 
 				if (TurnActive && Input.GetMouseButtonDown (1)) {
-
+					//Right clicking will end the current phase, or turn
 					if (MovePhase){
 							MovePhase = false;
 							AttackPhase = true;
@@ -107,7 +115,7 @@ public class AstarAI : MonoBehaviour
 		public void StartTurn ()
 		{
 
-				
+				//Sets the players turn to true for the game controller and sets the phase and time limit
 				TurnActive = true;
 				MovePhase = true;
 				print ("starting turn!");
@@ -118,7 +126,7 @@ public class AstarAI : MonoBehaviour
 
 		public void EndTurn ()
 		{
-
+				//Ensures all phases are false and sets the players turn to false for the game controller
 				TurnActive = false;
 				MovePhase = false;
 				AttackPhase = false;
@@ -127,12 +135,13 @@ public class AstarAI : MonoBehaviour
 
 		public void MoveCharacter (Vector3 target)
 		{
+				//Seeks out the path to be taken, and calls back with the 'OnPathComplete' method
 				mSeeker.StartPath (transform.position, target, OnPathComplete);
 		}
 
 		public void OnPathComplete (Path p)
 		{
-				//Debug.Log("Yay, we got a path back. Did it have an error? " + p.error);
+				//Checks if the path had an error, and if it didn't it sets the path variable to the current path and resets the waypoint counter
 				if (!p.error) {
 						path = p;
 
@@ -141,19 +150,23 @@ public class AstarAI : MonoBehaviour
 		}
 
 		public void FixedUpdate ()
-		{
+		{		
+				//Do nothing if there is no path currently
 				if (path == null) {
 						return;
 				}
-
+				//Do nothing if already at the destination
 				if (mCurrentWaypoint >= path.vectorPath.Count) {
 						return;
 				}
-		
+
+				//Checks if the player is moving or not, then moves the player if they need to be
 				if (!mMoving) {
 						iTween.MoveTo (gameObject, path.vectorPath [mCurrentWaypoint] + new Vector3 (0, 1, 0), 2f);
 						mMoving = true;
 				} else if (mMoving) {
+
+						//If the next waypoint isn't the last one, allows for corners to be cut for smoother looking motion
 						if (Vector3.Distance (transform.position, path.vectorPath [mCurrentWaypoint] + new Vector3 (0, 1, 0)) < 3f && mCurrentWaypoint < path.vectorPath.Count - 1) {
 								mMoving = false;
 								mCurrentWaypoint++;

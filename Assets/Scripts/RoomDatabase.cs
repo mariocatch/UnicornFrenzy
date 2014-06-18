@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class RoomDatabase : MonoBehaviour {
 
+	//List of rooms that can be spawned
 	public List<RoomInfo> Rooms = new List<RoomInfo>();
 
 }

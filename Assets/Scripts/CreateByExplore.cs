@@ -65,14 +65,14 @@ public class CreateByExplore : MonoBehaviour {
 		//Cast Rays at the centerpoint of the surrounding rooms
 		//set local bools to these values
 
-		RaycastHit nHit, sHit, eHit, wHit;
+		RaycastHit hit;
 
 	
-		if (Physics.Raycast (roomPos + new Vector3 (0, 1, mRoomOffset), Vector3.down, out nHit)) {
+		if (Physics.Raycast (roomPos + new Vector3 (0, 1, mRoomOffset), Vector3.down, out hit)) {
 			print ("Checking Northern Room!");
-			if (nHit.collider.tag == "Ground" ){
+			if (hit.collider.tag == "Ground" ){
 				print ("Hit Northern Room!");
-				nDoor = nHit.collider.gameObject.GetComponent<RoomInfo>().SouthDoor;
+				nDoor = hit.collider.gameObject.GetComponent<RoomInfo>().SouthDoor;
 				disableNDoor = true;
 				if (!nDoor){
 					//There is a room, but there is no way in
@@ -83,11 +83,11 @@ public class CreateByExplore : MonoBehaviour {
 			print ("No Northern Room Found!");
 		}
 
-		if (Physics.Raycast (roomPos - new Vector3 (0, -1, mRoomOffset), Vector3.down, out nHit)) {
+		if (Physics.Raycast (roomPos - new Vector3 (0, -1, mRoomOffset), Vector3.down, out hit)) {
 			print ("Checking Southern Room!");
-			if (nHit.collider.tag == "Ground" ){
+			if (hit.collider.tag == "Ground" ){
 				print ("Hit Southern Room!");
-				sDoor = nHit.collider.gameObject.GetComponent<RoomInfo>().NorthDoor;
+				sDoor = hit.collider.gameObject.GetComponent<RoomInfo>().NorthDoor;
 				disableSDoor = true;
 				if (!sDoor){
 					//There is a room, but there is no way in
@@ -98,11 +98,11 @@ public class CreateByExplore : MonoBehaviour {
 			print ("No Southern Room Found!");
 		}
 
-		if (Physics.Raycast (roomPos + new Vector3 (mRoomOffset, 1, 0), Vector3.down, out nHit)) {
+		if (Physics.Raycast (roomPos + new Vector3 (mRoomOffset, 1, 0), Vector3.down, out hit)) {
 			print ("Checking Eastern Room!");
-			if (nHit.collider.tag == "Ground" ){
+			if (hit.collider.tag == "Ground" ){
 				print ("Hit Eastern Room!");
-				eDoor = nHit.collider.gameObject.GetComponent<RoomInfo>().WestDoor;
+				eDoor = hit.collider.gameObject.GetComponent<RoomInfo>().WestDoor;
 				disableEDoor = true;
 				if (!eDoor){
 					//There is a room, but there is no way in
@@ -113,11 +113,11 @@ public class CreateByExplore : MonoBehaviour {
 			print ("No Eastern Room Found!");
 		}
 	
-		if (Physics.Raycast (roomPos - new Vector3 (mRoomOffset, -1, 0), Vector3.down, out nHit)) {
+		if (Physics.Raycast (roomPos - new Vector3 (mRoomOffset, -1, 0), Vector3.down, out hit)) {
 			print ("Checking Western Room!");
-			if (nHit.collider.tag == "Ground" ){
+			if (hit.collider.tag == "Ground" ){
 				print ("Hit Western Room!");
-				wDoor = nHit.collider.gameObject.GetComponent<RoomInfo>().EastDoor;
+				wDoor = hit.collider.gameObject.GetComponent<RoomInfo>().EastDoor;
 				disableWDoor = true;
 				if (!wDoor){
 					//There is a room, but there is no way in
@@ -128,6 +128,7 @@ public class CreateByExplore : MonoBehaviour {
 			print ("No Western Room Found!");
 		}
 
+		//search through room list and narrowdown to rooms that match the criteria
 		List<RoomInfo> PotentialSpawns = roomDatabase.Rooms;
 
 		if (nDoor) {
@@ -156,20 +157,18 @@ public class CreateByExplore : MonoBehaviour {
 		}
 
 		int RandomRoom = Random.Range (0, PotentialSpawns.Count);
+
+		//disable exit spawners as to not create rooms over exiting ones
 		PotentialSpawns [RandomRoom].NorthExit.SpawnerActive = !disableNDoor;
 		PotentialSpawns [RandomRoom].SouthExit.SpawnerActive = !disableSDoor;
 		PotentialSpawns [RandomRoom].EastExit.SpawnerActive = !disableEDoor;
 		PotentialSpawns [RandomRoom].WestExit.SpawnerActive = !disableWDoor;
 
-		Instantiate (PotentialSpawns [RandomRoom].gameObject, roomPos, transform.rotation);
-		gameController.ScanPath ();
-		//search through room list for a room that matches these criteria
 		//spawn room
-		//room contents based upon spawning objects at random transforms
-		//spawned enemies are added to the enemy turn list
-		//spawned loot containers are filled with rewards
-		//spawned doodads are marked as obstacles
+		Instantiate (PotentialSpawns [RandomRoom].gameObject, roomPos, transform.rotation);
+
 		//Rescan the grid
+		gameController.ScanPath ();
 
 	}
 
