@@ -93,7 +93,7 @@ public class AstarAI : MonoBehaviour
 						//Attacks the currently targeted enemy and ends the turn
 						if (mPlayerTarget != null && Input.GetButtonDown ("Attack") && Vector3.Distance (gameObject.transform.position, mPlayerTarget.transform.position) < AttackRange) {
 
-								mPlayerTarget.GetComponent<AstarAI> ().Health -= 10;
+								mPlayerTarget.GetComponent<Enemy> ().Health -= 10;
 								print ("Attacking!");
 								mPlayerTarget = null;
 								EndTurn ();

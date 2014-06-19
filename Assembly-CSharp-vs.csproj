@@ -116,14 +116,17 @@
      <Compile Include="Assets\AstarPathfindingProject\changelog.cs" />
      <Compile Include="Assets\Scripts\AstarAI.cs" />
      <Compile Include="Assets\Scripts\CreateByExplore.cs" />
+     <Compile Include="Assets\Scripts\Enemy.cs" />
      <Compile Include="Assets\Scripts\GameController.cs" />
      <Compile Include="Assets\Scripts\GenerateWorld.cs" />
+     <Compile Include="Assets\Scripts\Item.cs" />
      <Compile Include="Assets\Scripts\PlayerMovementController.cs" />
      <Compile Include="Assets\Scripts\RoomDatabase.cs" />
      <Compile Include="Assets\Scripts\RoomInfo.cs" />
      <Compile Include="Assets\Scripts\RoomPathController.cs" />
      <Compile Include="Assets\Scripts\SmoothCameraFollow.cs" />
      <Compile Include="Assets\Scripts\SpawnablesDatabase.cs" />
+     <Compile Include="Assets\Scripts\TestEnemy.cs" />
      <Compile Include="Assets\Scripts\iTween.cs" />
      <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh2.shader" />
      <None Include="Assets\AstarPathfindingProject\Plugins\DotNetZip\License.txt" />

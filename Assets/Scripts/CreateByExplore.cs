@@ -21,7 +21,7 @@ public class CreateByExplore : MonoBehaviour {
 		//Check if a player is within the collider, and if their turn is over.
 			//Each floor will have colliders set up across the edges that contain doors.
 			//Each floor will need to hold information regarding it's own doors
-		if (other.tag == "Enemy" && !other.GetComponent<AstarAI>().TurnActive && SpawnerActive) {
+		if (other.tag == "Player" && SpawnerActive) {
 
 			if (transform.localPosition.x > mPositionOffset) {
 				//Spawn Room at x- location
