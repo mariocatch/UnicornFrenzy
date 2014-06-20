@@ -11,6 +11,8 @@ public class AstarAI : MonoBehaviour
 		private Seeker mSeeker;
 		private float mStartTime;
 		private float mTurnTime;
+		private float mPathLength;
+		private float mMaxPathLength = 25;
 		private GameObject mPlayerTarget;
 		public MeshRenderer ARangeDisplay;
 		public MeshRenderer MRangeDisplay;
@@ -65,8 +67,6 @@ public class AstarAI : MonoBehaviour
 												if (Vector3.Distance (transform.position, targetPoint) <= MaxMoveDistance) { 
 														print (targetPoint);
 														MoveCharacter (targetPoint);
-														MovePhase = false;
-														AttackPhase = true;
 												}
 										}
 								}
@@ -101,12 +101,12 @@ public class AstarAI : MonoBehaviour
 				}
 
 				if (TurnActive && Input.GetMouseButtonDown (1)) {
-					//Right clicking will end the current phase, or turn
-					if (MovePhase){
-							MovePhase = false;
-							AttackPhase = true;
-					} else {
-							EndTurn ();
+						//Right clicking will end the current phase, or turn
+						if (MovePhase) {
+								MovePhase = false;
+								AttackPhase = true;
+						} else {
+								EndTurn ();
 						}
 
 				}
@@ -143,9 +143,14 @@ public class AstarAI : MonoBehaviour
 		{
 				//Checks if the path had an error, and if it didn't it sets the path variable to the current path and resets the waypoint counter
 				if (!p.error) {
-						path = p;
 
-						mCurrentWaypoint = 0;
+						mPathLength = p.GetTotalLength ();
+						if (mPathLength <= mMaxPathLength) {
+								path = p;
+								MovePhase = false;
+								AttackPhase = true;
+								mCurrentWaypoint = 0;
+						}
 				}
 		}
 
@@ -159,6 +164,7 @@ public class AstarAI : MonoBehaviour
 				if (mCurrentWaypoint >= path.vectorPath.Count) {
 						return;
 				}
+		
 
 				//Checks if the player is moving or not, then moves the player if they need to be
 				if (!mMoving) {
