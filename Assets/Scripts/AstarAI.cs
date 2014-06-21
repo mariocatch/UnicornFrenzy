@@ -100,14 +100,11 @@ public class AstarAI : MonoBehaviour
 						}
 				}
 
-				if (TurnActive && Input.GetMouseButtonDown (1)) {
+				if (TurnActive && Input.GetMouseButtonDown (1) && !mMoving) {
 						//Right clicking will end the current phase, or turn
-						if (MovePhase) {
-								MovePhase = false;
-								AttackPhase = true;
-						} else {
+
 								EndTurn ();
-						}
+						
 
 				}
 		}
@@ -148,7 +145,6 @@ public class AstarAI : MonoBehaviour
 						if (mPathLength <= mMaxPathLength) {
 								path = p;
 								MovePhase = false;
-								AttackPhase = true;
 								mCurrentWaypoint = 0;
 						}
 				}
@@ -180,6 +176,7 @@ public class AstarAI : MonoBehaviour
 
 								mMoving = false;
 								mCurrentWaypoint++;
+								AttackPhase = true;
 						}
 				}
 		}

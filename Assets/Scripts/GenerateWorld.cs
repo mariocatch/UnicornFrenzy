@@ -66,7 +66,7 @@ public class GenerateWorld : MonoBehaviour {
 
 			//Removes the tempfloor (required for creating the path) and changes the nodesize to 2 (for player pathing) then rescans the grid
 			Destroy (TempFloor);
-			Controller.ChangeNodeSize (2);
+			Controller.ChangeNodeSize (3);
 		}
 	
 	public void GeneratePath (Vector3 start, Vector3 target)

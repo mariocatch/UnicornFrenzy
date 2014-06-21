@@ -6,8 +6,8 @@ using System.Linq;
 public class CreateByExplore : MonoBehaviour {
 
 	public bool SpawnerActive = true;
-	public int mPositionOffset;
-	public int mRoomOffset;
+	private int mPositionOffset = 3;
+	private int mRoomOffset = 40;
 	public int mMaxWidth;
 	public int mMaxHeight;
 	public int mRoomWidth;

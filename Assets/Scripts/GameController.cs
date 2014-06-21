@@ -85,7 +85,7 @@ public class GameController : MonoBehaviour
 												print ("Attacking target!");
 												currentEnemy.BasicAttack (currentEnemy.Target);
 												mCurrentEnemy++;
-												print (mCurrentEnemy);
+												
 
 										} else if (Vector3.Distance (currentEnemy.transform.position, currentEnemy.Target.gameObject.transform.position) <= currentEnemy.MoveRange) {
 
@@ -94,7 +94,7 @@ public class GameController : MonoBehaviour
 												currentEnemy.MoveCharacter (currentEnemy.Target.gameObject.transform.position - Vector3.forward * currentEnemy.AttackRange);
 												currentEnemy.BasicAttack (currentEnemy.Target);
 												mCurrentEnemy++;
-												print (mCurrentEnemy);
+												
 										} else {
 
 						currentEnemy.transform.LookAt (currentEnemy.Target.gameObject.transform);
