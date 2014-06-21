@@ -14,6 +14,7 @@ public class AstarAI : MonoBehaviour
 		private float mPathLength;
 		private float mMaxPathLength = 25;
 		private GameObject mPlayerTarget;
+		private AstarPath mAstarPath;
 		public MeshRenderer ARangeDisplay;
 		public MeshRenderer MRangeDisplay;
 		public Path path;
@@ -26,6 +27,7 @@ public class AstarAI : MonoBehaviour
 		public void Start ()
 		{
 				mSeeker = GetComponent<Seeker> ();
+				mAstarPath = GameObject.FindGameObjectWithTag ("PathGen").GetComponent<AstarPath> ();
 		}
 
 		public void Update ()
@@ -113,6 +115,7 @@ public class AstarAI : MonoBehaviour
 		{
 
 				//Sets the players turn to true for the game controller and sets the phase and time limit
+				mAstarPath.astarData.gridGraph.GetNearest(transform.position).node.Walkable = true;
 				TurnActive = true;
 				MovePhase = true;
 				print ("starting turn!");
@@ -124,6 +127,7 @@ public class AstarAI : MonoBehaviour
 		public void EndTurn ()
 		{
 				//Ensures all phases are false and sets the players turn to false for the game controller
+				mAstarPath.astarData.gridGraph.GetNearest(transform.position).node.Walkable = false;
 				TurnActive = false;
 				MovePhase = false;
 				AttackPhase = false;
