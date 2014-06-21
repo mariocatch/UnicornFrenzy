@@ -16,6 +16,7 @@ public class TestEnemy : Enemy
 		private AstarPath mAstarPath;
 		private List<Vector3> mPossibleMoves;
 		public ParticleSystem FlameParticles;
+		public ParticleSystem BloodParticles;
 		private GameController mGameController;
 
 		void Start ()
@@ -105,6 +106,16 @@ public class TestEnemy : Enemy
 		
 		
 				target.Health -= BasicAttackDamage;
+		RaycastHit hit;
+		if (Physics.Raycast (transform.position, transform.forward, out hit)) {
+
+			if (hit.collider.tag == "Player"){
+
+				Instantiate (BloodParticles, hit.point, transform.rotation);
+
+			}
+
+				}
 				print ("Attacked for " + BasicAttackDamage);
 		
 		
@@ -113,6 +124,7 @@ public class TestEnemy : Enemy
 		public void FlameThrower (AstarAI target)
 		{
 
+				transform.LookAt (target.transform.position);
 				target.Health -= BasicAttackDamage;
 				FlameParticles.Play ();
 				print ("FLAMETHROWER!");
