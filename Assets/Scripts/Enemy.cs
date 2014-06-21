@@ -9,10 +9,16 @@ public class Enemy : MonoBehaviour {
 	public float AttackRange;
 	public float MoveRange;
 	public float AggroRange;
+	public bool TurnActive;
 	public int BasicAttackDamage;
 	public AstarAI Target;
 
 	public List<Item> Drops;
+
+	public virtual void StartTurn(){
+
+
+		}
 
 	public virtual void MoveCharacter (Vector3 target)
 	{
@@ -30,12 +36,4 @@ public class Enemy : MonoBehaviour {
 	
 	}
 
-	public void BasicAttack(AstarAI target){
-		
-		
-		target.Health -= BasicAttackDamage;
-		print ("Attacked for " + BasicAttackDamage);
-		
-		
-	}
 }

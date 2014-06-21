@@ -16,7 +16,7 @@ public class GameController : MonoBehaviour
 		private int mCurrentPlayer;
 		private int mCurrentEnemy;
 		private bool mNodesChanged;
-		private bool mPlayersTurn = true;
+	private bool mPlayersTurn = true;
 		private bool mEnemiesTurn;
 
 		void Start ()
@@ -52,6 +52,12 @@ public class GameController : MonoBehaviour
 										mCurrentPlayer = 0;
 										mPlayersTurn = false;
 										mEnemiesTurn = true;
+										if (Enemies.Count > 0){
+										
+											Enemies[0].StartTurn ();
+											print ("Enemy Turn!");
+
+										}
 				
 								} else {
 										Players [mCurrentPlayer].StartTurn ();
@@ -60,71 +66,24 @@ public class GameController : MonoBehaviour
 				}
 				if (mEnemiesTurn) {
 
+
+
 						if (Enemies.Count > 0) {
+
 						
-								print ("Enemy turn!");
 								Enemy currentEnemy = Enemies [mCurrentEnemy];
-								//Check if the enemy has a current target
-								//Check if that target is within attack range
-								//if so, attack then end turn, increment enemy turn
-								//Check if that target, if not within attack range, is within movement range
-								//move to within attack range
-								//attack then end turn, increment enemy turn
-								//if not within movement range, check if any other players are within attack range, then movement range
-								//if another player is within attack range, attack that player
-								//if not, and another player is within movement range, move to and attack that player
-								//if no players are within range for anything, move towards initial target
-								//end turn, increment enemy turn
-			
-								//if all enemies have gone, switch to player turn.
-								if (currentEnemy.Target != null) {
-										print ("I have a target!");
-										//Check if that target is within attack range
-										if (Vector3.Distance (currentEnemy.transform.position, currentEnemy.Target.gameObject.transform.position) <= currentEnemy.AttackRange) {
+							
+								if (Enemies [mCurrentEnemy].TurnActive == false) {
 
-												print ("Attacking target!");
-												currentEnemy.BasicAttack (currentEnemy.Target);
-												mCurrentEnemy++;
-												
+										mCurrentEnemy ++;
+										if (mCurrentEnemy < Enemies.Count){
 
-										} else if (Vector3.Distance (currentEnemy.transform.position, currentEnemy.Target.gameObject.transform.position) <= currentEnemy.MoveRange) {
-
-												print ("Moving to target!");
-												currentEnemy.transform.LookAt (currentEnemy.Target.gameObject.transform);
-												currentEnemy.MoveCharacter (currentEnemy.Target.gameObject.transform.position - Vector3.forward * currentEnemy.AttackRange);
-												currentEnemy.BasicAttack (currentEnemy.Target);
-												mCurrentEnemy++;
-												
-										} else {
-
-						currentEnemy.transform.LookAt (currentEnemy.Target.gameObject.transform);
-						currentEnemy.MoveCharacter (currentEnemy.transform.position + Vector3.forward * currentEnemy.MoveRange);
-						mCurrentEnemy++;
-
-												}
-			
-								} else {
-
-										for (int i = 0; i < Players.Count; i++) {
-
-
-
-						if (Vector3.Distance (currentEnemy.transform.position, Players [i].transform.position) <= currentEnemy.AggroRange) {
-
-							currentEnemy.Target = Players[i];
-
-												}
+						Enemies[mCurrentEnemy].StartTurn ();
 
 										}
 
-					if (currentEnemy.Target == null){
-
-						mCurrentEnemy++;
-
-					}
-
-					
 								}
+
 
 								if (mCurrentEnemy > Enemies.Count - 1) {
 										print ("Ending enemy phase!");
@@ -132,13 +91,13 @@ public class GameController : MonoBehaviour
 										mEnemiesTurn = false;
 										mPlayersTurn = true;
 										Players [mCurrentPlayer].StartTurn ();
-								}
+								} 
 						} else {
 					
-				mEnemiesTurn = false;
-				mPlayersTurn = true;
-				Players [mCurrentPlayer].StartTurn ();
-								}
+								mEnemiesTurn = false;
+								mPlayersTurn = true;
+								Players [mCurrentPlayer].StartTurn ();
+						}
 				}
 
 		}
