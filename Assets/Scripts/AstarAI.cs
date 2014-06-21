@@ -67,7 +67,6 @@ public class AstarAI : MonoBehaviour
 												Vector3 targetPoint = ray.GetPoint (hitdist);
                 
 												if (Vector3.Distance (transform.position, targetPoint) <= MaxMoveDistance) { 
-														print (targetPoint);
 														MoveCharacter (targetPoint);
 												}
 										}
@@ -95,7 +94,7 @@ public class AstarAI : MonoBehaviour
 						//Attacks the currently targeted enemy and ends the turn
 						if (mPlayerTarget != null && Input.GetButtonDown ("Attack") && Vector3.Distance (gameObject.transform.position, mPlayerTarget.transform.position) < AttackRange) {
 
-								mPlayerTarget.GetComponent<Enemy> ().Health -= 10;
+								mPlayerTarget.GetComponent<Enemy> ().TakeDamage (100);
 								print ("Attacking!");
 								mPlayerTarget = null;
 								EndTurn ();
@@ -105,7 +104,15 @@ public class AstarAI : MonoBehaviour
 				if (TurnActive && Input.GetMouseButtonDown (1) && !mMoving) {
 						//Right clicking will end the current phase, or turn
 
+						if (MovePhase) {
+
+								MovePhase = false;
+								AttackPhase = true;
+
+						} else {
+
 								EndTurn ();
+						}
 						
 
 				}
@@ -115,19 +122,17 @@ public class AstarAI : MonoBehaviour
 		{
 
 				//Sets the players turn to true for the game controller and sets the phase and time limit
-				mAstarPath.astarData.gridGraph.GetNearest(transform.position).node.Walkable = true;
+				mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = true;
 				TurnActive = true;
 				MovePhase = true;
 				print ("starting turn!");
-				print (TurnLimit);
 				mTurnTime = Time.time + TurnLimit;
-				print (mTurnTime);
 		}
 
 		public void EndTurn ()
 		{
 				//Ensures all phases are false and sets the players turn to false for the game controller
-				mAstarPath.astarData.gridGraph.GetNearest(transform.position).node.Walkable = false;
+				mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = false;
 				TurnActive = false;
 				MovePhase = false;
 				AttackPhase = false;

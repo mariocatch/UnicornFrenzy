@@ -15,6 +15,12 @@ public class Enemy : MonoBehaviour {
 
 	public List<Item> Drops;
 
+	public virtual void TakeDamage(int damage){
+
+
+
+	}
+
 	public virtual void StartTurn(){
 
 

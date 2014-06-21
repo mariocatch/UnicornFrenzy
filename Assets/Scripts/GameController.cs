@@ -16,7 +16,7 @@ public class GameController : MonoBehaviour
 		private int mCurrentPlayer;
 		private int mCurrentEnemy;
 		private bool mNodesChanged;
-	private bool mPlayersTurn = true;
+		private bool mPlayersTurn = true;
 		private bool mEnemiesTurn;
 
 		void Start ()
@@ -52,10 +52,10 @@ public class GameController : MonoBehaviour
 										mCurrentPlayer = 0;
 										mPlayersTurn = false;
 										mEnemiesTurn = true;
-										if (Enemies.Count > 0){
-										
-											Enemies[0].StartTurn ();
-											print ("Enemy Turn!");
+										if (Enemies.Count > 0) {
+
+												Enemies [0].StartTurn ();
+												print ("Enemy Turn!");
 
 										}
 				
@@ -70,15 +70,12 @@ public class GameController : MonoBehaviour
 
 						if (Enemies.Count > 0) {
 
-						
-								Enemy currentEnemy = Enemies [mCurrentEnemy];
-							
 								if (Enemies [mCurrentEnemy].TurnActive == false) {
 
 										mCurrentEnemy ++;
-										if (mCurrentEnemy < Enemies.Count){
+										if (mCurrentEnemy < Enemies.Count) {
 
-						Enemies[mCurrentEnemy].StartTurn ();
+												Enemies [mCurrentEnemy].StartTurn ();
 
 										}
 
@@ -93,7 +90,7 @@ public class GameController : MonoBehaviour
 										Players [mCurrentPlayer].StartTurn ();
 								} 
 						} else {
-					
+								mCurrentEnemy = 0;
 								mEnemiesTurn = false;
 								mPlayersTurn = true;
 								Players [mCurrentPlayer].StartTurn ();
