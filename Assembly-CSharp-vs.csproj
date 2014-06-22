@@ -124,6 +124,7 @@
      <Compile Include="Assets\JMO Assets\WarFX\Scripts\WFX_ParticleMeshBillboard.cs" />
      <Compile Include="Assets\JMO Assets\WarFX\Spawn System\CFX_SpawnSystem.cs" />
      <Compile Include="Assets\Scripts\AstarAI.cs" />
+     <Compile Include="Assets\Scripts\CameraControl.cs" />
      <Compile Include="Assets\Scripts\CreateByExplore.cs" />
      <Compile Include="Assets\Scripts\Enemy.cs" />
      <Compile Include="Assets\Scripts\GameController.cs" />
