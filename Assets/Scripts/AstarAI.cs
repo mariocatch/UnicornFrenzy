@@ -23,11 +23,18 @@ public class AstarAI : MonoBehaviour
 		public float TurnLimit;
 		public float MaxMoveDistance;
 		public bool TurnActive, MovePhase, AttackPhase;
+		private bool mAttacking;
+		private PlayerAbilityDatabase mAbilityDatabase;
+		private GameController mGameController;
+		private PlayerAbility mAbility1;
 
 		public void Start ()
 		{
 				mSeeker = GetComponent<Seeker> ();
 				mAstarPath = GameObject.FindGameObjectWithTag ("PathGen").GetComponent<AstarPath> ();
+				mGameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameController> ();
+				mAbilityDatabase = GameObject.FindGameObjectWithTag ("GameController").GetComponent<PlayerAbilityDatabase> ();
+				mAbility1 = mAbilityDatabase.PlayerAbilities [0];
 		}
 
 		public void Update ()
@@ -99,6 +106,15 @@ public class AstarAI : MonoBehaviour
 								mPlayerTarget = null;
 								EndTurn ();
 						}
+
+						if (Input.GetButtonDown ("Attack2") && mPlayerTarget != null && Vector3.Distance (gameObject.transform.position, mPlayerTarget.transform.position) < mAbility1.Range) {
+
+				Instantiate (mAbility1.AbilityParticles, mPlayerTarget.transform.position, mPlayerTarget.transform.rotation);
+					
+				mPlayerTarget.GetComponent<Enemy>().TakeDamage (50);
+					
+						}
+
 				}
 
 				if (TurnActive && Input.GetMouseButtonDown (1) && !mMoving) {
