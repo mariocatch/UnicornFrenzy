@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour {
 	public float AggroRange;
 	public bool TurnActive;
 	public int BasicAttackDamage;
-	public AstarAI Target;
+	public Player Target;
 
 	public List<Item> Drops;
 

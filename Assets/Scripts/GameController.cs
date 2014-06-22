@@ -6,7 +6,7 @@ using Pathfinding;
 public class GameController : MonoBehaviour
 {
 
-		public List <AstarAI> Players;
+		public List <Player> Players;
 		public List <Enemy> Enemies;
 		public GameObject NewPlane;
 		public Transform SpawnLocation;

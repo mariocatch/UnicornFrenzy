@@ -110,7 +110,7 @@ public class TestEnemy : Enemy
 				mSeeker.StartPath (transform.position, target, OnPathComplete);
 		}
 	
-		public void BasicAttack (AstarAI target)
+		public void BasicAttack (Player target)
 		{
 		
 		
@@ -130,7 +130,7 @@ public class TestEnemy : Enemy
 		
 		}
 
-		public void FlameThrower (AstarAI target)
+		public void FlameThrower (Player target)
 		{
 
 				transform.LookAt (target.transform.position);
