@@ -71,6 +71,15 @@ public class TestEnemy : Enemy
 								if (Vector3.Distance (transform.position, mGameController.Players [i].transform.position) <= AggroRange) {
 					
 										Target = mGameController.Players [i];
+					if (Vector3.Distance (transform.position, Target.transform.position) <= MoveRange) {
+						
+						transform.LookAt (Target.transform.position);
+						MoveCharacter (Target.transform.position); // - transform.forward * AttackRange
+						
+					} else {
+						transform.LookAt (Target.transform.position);
+						MoveCharacter (transform.position + transform.forward * MoveRange);
+					}
 					
 								}
 				
