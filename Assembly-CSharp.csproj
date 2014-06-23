@@ -127,15 +127,14 @@
      <Compile Include="Assets\Scripts\CameraControl.cs" />
      <Compile Include="Assets\Scripts\CreateByExplore.cs" />
      <Compile Include="Assets\Scripts\Enemy.cs" />
-     <Compile Include="Assets\Scripts\EngiBasicShot.cs" />
      <Compile Include="Assets\Scripts\EngiNuke.cs" />
+     <Compile Include="Assets\Scripts\EngiTaser.cs" />
      <Compile Include="Assets\Scripts\GameController.cs" />
      <Compile Include="Assets\Scripts\GenerateWorld.cs" />
      <Compile Include="Assets\Scripts\Item.cs" />
      <Compile Include="Assets\Scripts\ParticleDatabase.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
      <Compile Include="Assets\Scripts\PlayerAbility.cs" />
-     <Compile Include="Assets\Scripts\PlayerAbilityDatabase.cs" />
      <Compile Include="Assets\Scripts\PlayerEngineer.cs" />
      <Compile Include="Assets\Scripts\PlayerMovementController.cs" />
      <Compile Include="Assets\Scripts\RoomDatabase.cs" />
@@ -164,6 +163,7 @@
      <None Include="Assets\JMO Assets\WarFX\_Effects (Mobile, Regular Mesh)\MuzzleFlashes\!MuzzleFlash Differences.txt" />
      <None Include="Assets\JMO Assets\!JMO Assets Readme.txt" />
      <None Include="Assets\AstarPathfindingProject\Readme_upgrading.txt" />
+     <None Include="Assets\Elementals\!Readme.txt" />
      <None Include="Assets\AstarPathfindingProject\ExampleScenes\Materials\Projector Light.shader" />
      <None Include="Assets\JMO Assets\WarFX\Shaders\WFX_S Multiply Soft Scroll.shader" />
      <None Include="Assets\JMO Assets\WarFX\_Effects (Mobile, Reduced Overdraw)\!Mobile differences.txt" />

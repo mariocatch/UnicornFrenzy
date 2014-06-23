@@ -3,14 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class EngiNuke : PlayerAbility {
-
-	public int Damage;
+	
 	public int BlastRange;
 
 	private List<Enemy> mEnemyTargets;
 	
 
-	public override void UseAbility (Vector3 targetLoc, int modify, GameController controller)
+	public override void UseAbility (Player source, Vector3 targetLoc, int modify, GameController controller)
 	{
 
 		Instantiate (Particles, targetLoc, Quaternion.identity);

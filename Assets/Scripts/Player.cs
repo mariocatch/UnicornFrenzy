@@ -24,7 +24,7 @@ public class Player : MonoBehaviour {
 
 	//Resource maximums
 	public int MaxHealth;
-	public int MaxActionPoints;
+	public int MaxActionPoints = 6;
 
 	//Navigation variables
 	[HideInInspector]
@@ -75,6 +75,12 @@ public class Player : MonoBehaviour {
 	}
 
 	public virtual void Update(){
+
+		if (ActionPoints > MaxActionPoints) {
+
+			ActionPoints = MaxActionPoints;
+
+				}
 
 		MRangeDisplay.enabled = MovePhase;
 		ARangeDisplay.enabled = AttackPhase;
@@ -132,7 +138,7 @@ public class Player : MonoBehaviour {
 						Vector3 targetPoint = ray.GetPoint (hitdist);
 						
 						if (Vector3.Distance (transform.position, targetPoint) <= Ability2.Range) { 
-							Ability2.UseAbility(targetPoint, 0, mGameController);
+							Ability2.UseAbility(this, targetPoint, 0, mGameController);
 							mSelectLocation = false;
 							EndTurn ();
 						}

@@ -31,6 +31,7 @@ public class TestEnemy : Enemy
 
 		public override void StartTurn ()
 		{
+				base.StartTurn ();
 
 				mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = true;
 				mNumTurns ++;
@@ -47,7 +48,11 @@ public class TestEnemy : Enemy
 
 								} else {
 
-										BasicAttack (Target);
+									if (Random.Range (0, 5) > (HitChance - HitReducer)){
+											BasicAttack (Target);
+										} else {
+						print ("Missed!");
+					}
 								}
 								EndTurn ();
 
@@ -113,8 +118,8 @@ public class TestEnemy : Enemy
 		public void BasicAttack (Player target)
 		{
 		
-		
-				target.Health -= BasicAttackDamage;
+				int DamageDealt = (BasicAttackDamage + Random.Range (0, DamageBonus)) - DamageReducer;
+		target.Health -= DamageDealt;
 		RaycastHit hit;
 		if (Physics.Raycast (transform.position, transform.forward, out hit)) {
 
@@ -125,7 +130,7 @@ public class TestEnemy : Enemy
 			}
 
 				}
-				print ("Attacked for " + BasicAttackDamage);
+		print ("Attacked for " + DamageDealt);
 		
 		
 		}
@@ -134,9 +139,10 @@ public class TestEnemy : Enemy
 		{
 
 				transform.LookAt (target.transform.position);
-				target.Health -= BasicAttackDamage;
+				int DamageDealt = (BasicAttackDamage + (2 * Random.Range (0, DamageBonus))) - DamageReducer;
+				target.Health -= DamageDealt;
 				FlameParticles.Play ();
-				print ("FLAMETHROWER!");
+				print ("FLAMETHROWER! for " + DamageDealt);
 
 
 		}

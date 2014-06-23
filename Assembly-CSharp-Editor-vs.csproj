@@ -80,6 +80,7 @@
      <None Include="Assets\JMO Assets\WarFX\_Effects (Mobile, Regular Mesh)\MuzzleFlashes\!MuzzleFlash Differences.txt" />
      <None Include="Assets\JMO Assets\!JMO Assets Readme.txt" />
      <None Include="Assets\AstarPathfindingProject\Readme_upgrading.txt" />
+     <None Include="Assets\Elementals\!Readme.txt" />
      <None Include="Assets\AstarPathfindingProject\ExampleScenes\Materials\Projector Light.shader" />
      <None Include="Assets\JMO Assets\WarFX\Shaders\WFX_S Multiply Soft Scroll.shader" />
      <None Include="Assets\JMO Assets\WarFX\_Effects (Mobile, Reduced Overdraw)\!Mobile differences.txt" />

@@ -40,7 +40,7 @@ public override void Update ()
 			//Attacks the currently targeted enemy and ends the turn
 			if (mPlayerTarget != null && Input.GetButtonDown ("Attack") && Vector3.Distance (gameObject.transform.position, mPlayerTarget.transform.position) <= Ability1.Range) {
 				
-				Ability1.UseAbility(mPlayerTarget.GetComponent<Enemy>(), Technology);
+				Ability1.UseAbility(this, mPlayerTarget.GetComponent<Enemy>(), Technology);
 				EndTurn ();
 			}
 
