@@ -145,11 +145,12 @@ public class TestEnemy : Enemy
 		{
 		
 				Health -= damage;
+				print ("Taking Damage!");
 				if (Health <= 0) {
 
-						mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = true;
+ 						mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = true;
 						mGameController.Enemies.Remove (this);
-						Destroy (gameObject);
+						Destroy (gameObject, .5f);
 
 				}
 		

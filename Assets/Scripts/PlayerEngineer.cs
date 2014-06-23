@@ -9,6 +9,8 @@ public class PlayerEngineer : Player {
 public override void Start ()
 	{
 		base.Start ();
+		Ability1 = Abilities [0];
+		Ability2 = Abilities [1];
 
 	}
 	
@@ -36,12 +38,16 @@ public override void Update ()
 			}
 			
 			//Attacks the currently targeted enemy and ends the turn
-			if (mPlayerTarget != null && Input.GetButtonDown ("Attack") && Vector3.Distance (gameObject.transform.position, mPlayerTarget.transform.position) < AttackRange) {
+			if (mPlayerTarget != null && Input.GetButtonDown ("Attack") && Vector3.Distance (gameObject.transform.position, mPlayerTarget.transform.position) <= Ability1.Range) {
 				
-				mPlayerTarget.GetComponent<Enemy> ().TakeDamage (100);
-				print ("Attacking!");
-				mPlayerTarget = null;
+				Ability1.UseAbility(mPlayerTarget.GetComponent<Enemy>(), Technology);
 				EndTurn ();
+			}
+
+			if (Input.GetButtonDown ("Attack2")){
+
+					mSelectLocation = !mSelectLocation;
+
 			}
 		}
 	}

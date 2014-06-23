@@ -2,11 +2,21 @@
 using System.Collections;
 
 [System.Serializable]
-public class PlayerAbility {
+public class PlayerAbility : MonoBehaviour {
 
-	public string AbilityName;
-	public int Damage;
 	public int Range;
-	public int BlastRange;
-	public ParticleSystem AbilityParticles;	
+	public ParticleSystem Particles;
+
+
+	public virtual void UseAbility(Player target, int modify){
+
+	}
+
+	public virtual void UseAbility(Vector3 targetLoc, int modify, GameController controller){
+
+	}
+
+	public virtual void UseAbility(Enemy target, int modify){
+
+	}
 }

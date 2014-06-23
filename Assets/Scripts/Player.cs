@@ -1,8 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using Pathfinding;
 
 public class Player : MonoBehaviour {
+
+	//GameController
+	[HideInInspector]
+	public GameController mGameController;
 
 	//Player stats
 	public int Strength;
@@ -50,15 +55,22 @@ public class Player : MonoBehaviour {
 	//Combat variables
 	[HideInInspector]
 	public GameObject mPlayerTarget;
+	[HideInInspector]
+	public bool mSelectLocation;
 
 	//Range displays
 	public MeshRenderer ARangeDisplay;
 	public MeshRenderer MRangeDisplay;
-	
+
+	//Abilities
+	public List<PlayerAbility> Abilities;
+	public PlayerAbility Ability1, Ability2, Ability3, Ability4;
+
 	public virtual void Start(){
 
 		mSeeker = gameObject.GetComponent<Seeker> ();
 		mAstarPath = GameObject.FindGameObjectWithTag ("PathGen").GetComponent<AstarPath> ();
+		mGameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameController> ();
 		
 	}
 
@@ -101,6 +113,33 @@ public class Player : MonoBehaviour {
 					}
 				}
 			}
+		}
+
+		if (mSelectLocation && Input.GetMouseButtonDown (0)) {
+
+			var playerPlane = new Plane (Vector3.up, transform.position);
+			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+			RaycastHit hit;
+			float hitdist = 0.0f;
+			
+			//Casts a ray at the screen position to select a new point to move to
+			//will only navigate to said point if the ground is hit
+			if (Physics.Raycast (ray, out hit)) {
+				
+				if (hit.collider.tag == "Ground") {
+					
+					if (playerPlane.Raycast (ray, out hitdist)) {
+						Vector3 targetPoint = ray.GetPoint (hitdist);
+						
+						if (Vector3.Distance (transform.position, targetPoint) <= Ability2.Range) { 
+							Ability2.UseAbility(targetPoint, 0, mGameController);
+							mSelectLocation = false;
+							EndTurn ();
+						}
+					}
+				}
+			}	
+		
 		}
 
 		if (TurnActive && Input.GetMouseButtonDown (1) && !mMoving) {

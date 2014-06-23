@@ -6,7 +6,6 @@ public class AstarAI : MonoBehaviour
 {
 		private const float speed = 5;
 		private int mCurrentWaypoint;
-		private float mJourneyLength;
 		private bool mMoving;
 		private Seeker mSeeker;
 		private float mStartTime;
@@ -24,17 +23,17 @@ public class AstarAI : MonoBehaviour
 		public float MaxMoveDistance;
 		public bool TurnActive, MovePhase, AttackPhase;
 		private bool mAttacking;
-		private PlayerAbilityDatabase mAbilityDatabase;
-		private GameController mGameController;
-		private PlayerAbility mAbility1;
+		//private PlayerAbilityDatabase mAbilityDatabase;
+		//private GameController mGameController;
+		//private PlayerAbility mAbility1;
 
 		public void Start ()
 		{
 				mSeeker = GetComponent<Seeker> ();
 				mAstarPath = GameObject.FindGameObjectWithTag ("PathGen").GetComponent<AstarPath> ();
-				mGameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameController> ();
-				mAbilityDatabase = GameObject.FindGameObjectWithTag ("GameController").GetComponent<PlayerAbilityDatabase> ();
-				mAbility1 = mAbilityDatabase.PlayerAbilities [0];
+				//mGameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameController> ();
+				//mAbilityDatabase = GameObject.FindGameObjectWithTag ("GameController").GetComponent<PlayerAbilityDatabase> ();
+				//mAbility1 = mAbilityDatabase.PlayerAbilities [0];
 		}
 
 		public void Update ()
@@ -107,13 +106,13 @@ public class AstarAI : MonoBehaviour
 								EndTurn ();
 						}
 
-						if (Input.GetButtonDown ("Attack2") && mPlayerTarget != null && Vector3.Distance (gameObject.transform.position, mPlayerTarget.transform.position) < mAbility1.Range) {
+						//if (Input.GetButtonDown ("Attack2") && mPlayerTarget != null && Vector3.Distance (gameObject.transform.position, mPlayerTarget.transform.position) < mAbility1.Range) {
 
-				Instantiate (mAbility1.AbilityParticles, mPlayerTarget.transform.position, mPlayerTarget.transform.rotation);
+				//Instantiate (mAbility1.AbilityParticles, mPlayerTarget.transform.position, mPlayerTarget.transform.rotation);
 					
-				mPlayerTarget.GetComponent<Enemy>().TakeDamage (50);
+				//mPlayerTarget.GetComponent<Enemy>().TakeDamage (50);
 					
-						}
+						//}
 
 				}
 
