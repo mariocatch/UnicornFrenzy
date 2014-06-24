@@ -6,7 +6,7 @@ public class EngiNuke : PlayerAbility {
 	
 	public int BlastRange;
 
-	private List<Enemy> mEnemyTargets;
+	private List<Enemy> mEnemyTargets = new List<Enemy>();
 	
 
 	public override void UseAbility (Player source, Vector3 targetLoc, int modify, GameController controller)

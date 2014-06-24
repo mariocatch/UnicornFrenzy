@@ -21,6 +21,10 @@ public class PlayerAbility : MonoBehaviour {
 
 	}
 
+	public virtual void UseAbility(Player source, int modify, GameController controller){
+		
+	}
+
 	public virtual void UseAbility(Player source, Enemy target, int modify){
 
 	}

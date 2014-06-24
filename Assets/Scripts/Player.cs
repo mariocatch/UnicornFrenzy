@@ -81,7 +81,11 @@ public class Player : MonoBehaviour {
 			ActionPoints = MaxActionPoints;
 
 				}
+		if (!AttackPhase) {
 
+			mSelectLocation = false;
+
+				}
 		MRangeDisplay.enabled = MovePhase;
 		ARangeDisplay.enabled = AttackPhase;
 		
@@ -121,7 +125,7 @@ public class Player : MonoBehaviour {
 			}
 		}
 
-		if (mSelectLocation && Input.GetMouseButtonDown (0)) {
+		if (mSelectLocation && Input.GetMouseButtonDown (0) && AttackPhase) {
 
 			var playerPlane = new Plane (Vector3.up, transform.position);
 			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
