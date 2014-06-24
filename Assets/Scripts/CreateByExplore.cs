@@ -139,6 +139,7 @@ public class CreateByExplore : MonoBehaviour {
 		//search through room list and narrowdown to rooms that match the criteria
 		List<RoomInfo> PotentialSpawns = roomDatabase.Rooms;
 
+
 		if (nDoor) {
 						PotentialSpawns = PotentialSpawns.Where (x => x.NorthDoor == true).ToList();
 				}
@@ -165,24 +166,25 @@ public class CreateByExplore : MonoBehaviour {
 		}
 
 		int RandomRoom = Random.Range (0, PotentialSpawns.Count);
-		PotentialSpawns [RandomRoom].SetExits ();
+		//spawn room
+		GameObject SpawnedRoom = Instantiate (PotentialSpawns [RandomRoom].gameObject, roomPos, transform.rotation) as GameObject;
+		SpawnedRoom.GetComponent<RoomInfo>().SetExits ();
 
 		//disable exit spawners as to not create rooms over exiting ones
 		if (disableNDoor) {
-						PotentialSpawns [RandomRoom].NorthExit.SpawnerActive = false;
+			SpawnedRoom.GetComponent<RoomInfo>().NorthExit.SpawnerActive = false;
 				}
 		if (disableSDoor) {
-						PotentialSpawns [RandomRoom].SouthExit.SpawnerActive = false;
+			SpawnedRoom.GetComponent<RoomInfo>().SouthExit.SpawnerActive = false;
 				}
 		if (disableEDoor) {
-						PotentialSpawns [RandomRoom].EastExit.SpawnerActive = false;
+			SpawnedRoom.GetComponent<RoomInfo>().EastExit.SpawnerActive = false;
 				}
 		if (disableWDoor) {
-						PotentialSpawns [RandomRoom].WestExit.SpawnerActive = false;
+			SpawnedRoom.GetComponent<RoomInfo>().WestExit.SpawnerActive = false;
 				}
 
-		//spawn room
-		Instantiate (PotentialSpawns [RandomRoom].gameObject, roomPos, transform.rotation);
+
 
 		//Rescan the grid
 		gameController.ScanPath ();
