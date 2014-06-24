@@ -5,7 +5,7 @@ using System.Linq;
 
 public class CreateByExplore : MonoBehaviour {
 
-	public bool SpawnerActive = true;
+	public bool SpawnerActive;
 	private int mPositionOffset = 3;
 	private int mRoomOffset = 40;
 	public int mMaxWidth;
@@ -77,6 +77,8 @@ public class CreateByExplore : MonoBehaviour {
 				if (!nDoor){
 					//There is a room, but there is no way in
 					nBlocked = true;
+				} else {
+					hit.collider.gameObject.GetComponent<RoomInfo>().SouthExit.SpawnerActive = false;
 				}
 			} 
 		} else {
@@ -92,6 +94,8 @@ public class CreateByExplore : MonoBehaviour {
 				if (!sDoor){
 					//There is a room, but there is no way in
 					sBlocked = true;
+				} else {
+					hit.collider.gameObject.GetComponent<RoomInfo>().NorthExit.SpawnerActive = false;
 				}
 			}
 		} else {
@@ -107,6 +111,8 @@ public class CreateByExplore : MonoBehaviour {
 				if (!eDoor){
 					//There is a room, but there is no way in
 					eBlocked = true;
+				}else {
+					hit.collider.gameObject.GetComponent<RoomInfo>().WestExit.SpawnerActive = false;
 				}
 			}
 		} else {
@@ -122,6 +128,8 @@ public class CreateByExplore : MonoBehaviour {
 				if (!wDoor){
 					//There is a room, but there is no way in
 					wBlocked = true;
+				}else {
+					hit.collider.gameObject.GetComponent<RoomInfo>().EastExit.SpawnerActive = false;
 				}
 			}
 		} else {
@@ -157,12 +165,21 @@ public class CreateByExplore : MonoBehaviour {
 		}
 
 		int RandomRoom = Random.Range (0, PotentialSpawns.Count);
+		PotentialSpawns [RandomRoom].SetExits ();
 
 		//disable exit spawners as to not create rooms over exiting ones
-		PotentialSpawns [RandomRoom].NorthExit.SpawnerActive = !disableNDoor;
-		PotentialSpawns [RandomRoom].SouthExit.SpawnerActive = !disableSDoor;
-		PotentialSpawns [RandomRoom].EastExit.SpawnerActive = !disableEDoor;
-		PotentialSpawns [RandomRoom].WestExit.SpawnerActive = !disableWDoor;
+		if (disableNDoor) {
+						PotentialSpawns [RandomRoom].NorthExit.SpawnerActive = false;
+				}
+		if (disableSDoor) {
+						PotentialSpawns [RandomRoom].SouthExit.SpawnerActive = false;
+				}
+		if (disableEDoor) {
+						PotentialSpawns [RandomRoom].EastExit.SpawnerActive = false;
+				}
+		if (disableWDoor) {
+						PotentialSpawns [RandomRoom].WestExit.SpawnerActive = false;
+				}
 
 		//spawn room
 		Instantiate (PotentialSpawns [RandomRoom].gameObject, roomPos, transform.rotation);

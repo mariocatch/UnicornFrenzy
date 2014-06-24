@@ -18,6 +18,7 @@ public class RoomInfo : MonoBehaviour {
 
 	void Start(){
 
+
 		mSpawnablesDatabase = GameObject.FindGameObjectWithTag("GameController").GetComponent<SpawnablesDatabase>();
 
 		//Checks to see if the room contains enemies items and trap locations before spawning them in
@@ -31,6 +32,15 @@ public class RoomInfo : MonoBehaviour {
 			SpawnTrap ();
 				}
 	}
+
+	public void SetExits(){
+
+		NorthExit.SpawnerActive = NorthDoor;
+		SouthExit.SpawnerActive = SouthDoor;
+		EastExit.SpawnerActive = EastDoor;
+		WestExit.SpawnerActive = WestDoor;
+
+		}
 	
 	void SpawnEnemies(){
 		
