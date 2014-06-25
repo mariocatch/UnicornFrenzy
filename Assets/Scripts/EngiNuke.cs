@@ -9,7 +9,7 @@ public class EngiNuke : PlayerAbility {
 	private List<Enemy> mEnemyTargets = new List<Enemy>();
 	
 
-	public override void UseAbility (Player source, Vector3 targetLoc, int modify, GameController controller)
+	public override void UseAbility (Player source, Vector3 targetLoc, int modify1, int modify2, GameController controller)
 	{
 
 		Instantiate (Particles, targetLoc, Quaternion.identity);

@@ -5,6 +5,9 @@ using Pathfinding;
 
 public class Player : MonoBehaviour {
 
+	//GUI Variables
+	public string PlayerName;
+
 	//GameController
 	[HideInInspector]
 	public GameController mGameController;
@@ -16,6 +19,11 @@ public class Player : MonoBehaviour {
 	public int Armor;
 	public int Technology;
 	public int Speed;
+	[HideInInspector]
+	public int PrimaryStat;
+	[HideInInspector]
+	public int SecondaryStat;
+	public int Range;
 
 	//Resource variables
 	public int Health;
@@ -47,16 +55,24 @@ public class Player : MonoBehaviour {
 	[HideInInspector]
 	public bool AttackPhase;
 	[HideInInspector]
+	public bool AttackAble;
+	[HideInInspector]
 	public bool mMoving;
+	[HideInInspector]
+	public bool MoveAble;
 	[HideInInspector]
 	public float mTurnTime;
 	public float TurnLimit = 25;
 
 	//Combat variables
 	[HideInInspector]
-	public GameObject mPlayerTarget;
+	public Enemy mEnemyTarget;
+	[HideInInspector]
+	public Player mFriendlyTarget;
 	[HideInInspector]
 	public bool mSelectLocation;
+	[HideInInspector]
+	public PlayerAbility mWorldAbility;
 
 	//Range displays
 	public MeshRenderer ARangeDisplay;
@@ -71,6 +87,7 @@ public class Player : MonoBehaviour {
 		mSeeker = gameObject.GetComponent<Seeker> ();
 		mAstarPath = GameObject.FindGameObjectWithTag ("PathGen").GetComponent<AstarPath> ();
 		mGameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameController> ();
+		ARangeDisplay.transform.localScale = new Vector3 (Range * 2, 0, Range * 2);
 		
 	}
 
@@ -81,100 +98,193 @@ public class Player : MonoBehaviour {
 			ActionPoints = MaxActionPoints;
 
 				}
-		if (!AttackPhase) {
+		if (TurnActive) {
 
-			mSelectLocation = false;
+						if (!mSelectLocation && !MoveAble && !AttackAble) {
 
-				}
-		MRangeDisplay.enabled = MovePhase;
-		ARangeDisplay.enabled = AttackPhase;
-		
-		if (Health > MaxHealth) {
+								EndTurn ();
 
-			Health = MaxHealth;
-
-				}
-
-		if (Time.time > mTurnTime && TurnActive) {
-			
-			//Ends the players turn after a certain amount of time
-			EndTurn ();
-			
-		}
-
-		if (Input.GetMouseButtonDown (0) && GUIUtility.hotControl == 0 && TurnActive && MovePhase) {
-			var playerPlane = new Plane (Vector3.up, transform.position);
-			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-			RaycastHit hit;
-			float hitdist = 0.0f;
-			
-			//Casts a ray at the screen position to select a new point to move to
-			//will only navigate to said point if the ground is hit
-			if (Physics.Raycast (ray, out hit)) {
-				
-				if (hit.collider.tag == "Ground") {
-					
-					if (playerPlane.Raycast (ray, out hitdist)) {
-						Vector3 targetPoint = ray.GetPoint (hitdist);
-						
-						if (Vector3.Distance (transform.position, targetPoint) <= Speed) { 
-							MoveCharacter (targetPoint);
 						}
-					}
+
+						MRangeDisplay.enabled = MovePhase;
+
+						if (mSelectLocation || !AttackAble) {
+								ARangeDisplay.enabled = false;
+						} else {
+								ARangeDisplay.enabled = !MovePhase;
+						}
+		
+						if (Health > MaxHealth) {
+
+								Health = MaxHealth;
+
+						}
+
+						if (Time.time > mTurnTime && TurnActive) {
+			
+								//Ends the players turn after a certain amount of time
+								EndTurn ();
+			
+						}
+
+						if (Input.GetMouseButtonDown (0) && GUIUtility.hotControl == 0 && TurnActive && !MovePhase) {
+								Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+								RaycastHit hit;
+								if (Physics.Raycast (ray, out hit)) {
+										if (hit.collider.gameObject.tag == "Enemy") {
+					
+												mEnemyTarget = hit.collider.gameObject.GetComponent<Enemy> ();
+												print ("enemy target aquired!");
+										} else if (hit.collider.gameObject.tag == "Player") {
+
+												mFriendlyTarget = hit.collider.gameObject.GetComponent<Player> ();
+												print ("friendly target aquired!");
+										}
+								}
+			
+						}
+
+						if (Input.GetMouseButtonDown (0) && GUIUtility.hotControl == 0 && TurnActive && MovePhase) {
+								var playerPlane = new Plane (Vector3.up, transform.position);
+								Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+								RaycastHit hit;
+								float hitdist = 0.0f;
+			
+								//Casts a ray at the screen position to select a new point to move to
+								//will only navigate to said point if the ground is hit
+								if (Physics.Raycast (ray, out hit)) {
+				
+										if (hit.collider.tag == "Ground") {
+					
+												if (playerPlane.Raycast (ray, out hitdist)) {
+														Vector3 targetPoint = ray.GetPoint (hitdist);
+						
+														if (Vector3.Distance (transform.position, targetPoint) <= Speed) { 
+																MoveCharacter (targetPoint);
+																MoveAble = false;
+														}
+												}
+										}
+								}
+			
+						}
+
+						if (mSelectLocation && Input.GetMouseButtonDown (0)) {
+
+								var playerPlane = new Plane (Vector3.up, transform.position);
+								Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+								RaycastHit hit;
+								float hitdist = 0.0f;
+			
+								//Casts a ray at the screen position to select a new point to move to
+								//will only navigate to said point if the ground is hit
+								if (Physics.Raycast (ray, out hit)) {
+				
+										if (hit.collider.tag == "Ground") {
+					
+												if (playerPlane.Raycast (ray, out hitdist)) {
+														Vector3 targetPoint = ray.GetPoint (hitdist);
+						
+														if (Vector3.Distance (transform.position, targetPoint) <= Range) { 
+																mWorldAbility.UseAbility (this, targetPoint, PrimaryStat, SecondaryStat, mGameController);
+																mWorldAbility = null;
+																mSelectLocation = false;
+														}
+												}
+										}
+								}	
+		
+						}
+				} else {
+			MRangeDisplay.enabled = false;
+			ARangeDisplay.enabled = false;
+
 				}
+	}
+
+	void OnGUI(){
+
+		//Activates player specific Gui elements during the respective players turn
+		if (TurnActive) {
+
+			GUI.Label (new Rect (225, 15, 80, 25), PlayerName);
+
+			if (GUI.Button(new Rect(90, 45, 80, 20), "Move") && MoveAble && !mSelectLocation){
+
+				MovePhase = true;
+
 			}
-		}
 
-		if (mSelectLocation && Input.GetMouseButtonDown (0) && AttackPhase) {
+			if (GUI.Button(new Rect(180, 45, 80, 20), "Ability1") && AttackAble && !MovePhase){
+				
+				AbilityHandler (Ability1);
+	
+			}
 
-			var playerPlane = new Plane (Vector3.up, transform.position);
-			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-			RaycastHit hit;
-			float hitdist = 0.0f;
-			
-			//Casts a ray at the screen position to select a new point to move to
-			//will only navigate to said point if the ground is hit
-			if (Physics.Raycast (ray, out hit)) {
+			if (GUI.Button(new Rect(270, 45, 80, 20), "Ability2") && AttackAble && !MovePhase){
 				
-				if (hit.collider.tag == "Ground") {
-					
-					if (playerPlane.Raycast (ray, out hitdist)) {
-						Vector3 targetPoint = ray.GetPoint (hitdist);
-						
-						if (Vector3.Distance (transform.position, targetPoint) <= Ability2.Range) { 
-							Ability2.UseAbility(this, targetPoint, 0, mGameController);
-							mSelectLocation = false;
-							EndTurn ();
-						}
-					}
-				}
-			}	
-		
-		}
+				AbilityHandler (Ability2);
+				
+			}
 
-		if (TurnActive && Input.GetMouseButtonDown (1) && !mMoving) {
-			//Right clicking will end the current phase, or turn
-			
-			if (MovePhase) {
-				
-				MovePhase = false;
-				AttackPhase = true;
-				
-			} else {
+			if (GUI.Button(new Rect(360, 45, 80, 20), "End Turn") && !mMoving){
 				
 				EndTurn ();
+				
 			}
-			
-			
+
+
+
+				}
+
 		}
-		
-	}
+
+	public void AbilityHandler(PlayerAbility ability){
+
+		switch (ability.Type) {
+
+		case PlayerAbility.AbilityType.EnemyTarget:
+			if (mEnemyTarget != null){
+				if (Vector3.Distance(mEnemyTarget.gameObject.transform.position, gameObject.transform.position) <= Range){
+				ability.UseAbility (this, mEnemyTarget, PrimaryStat, SecondaryStat);
+				AttackAble = false;
+				}
+			}
+			break;
+
+		case PlayerAbility.AbilityType.AllyTarget:
+			if (mFriendlyTarget != null){
+				if (Vector3.Distance(mFriendlyTarget.gameObject.transform.position, gameObject.transform.position) <= Range){
+				ability.UseAbility (this, mFriendlyTarget, PrimaryStat, SecondaryStat);
+				AttackAble = false;
+				}
+			}
+			break;
+
+		case PlayerAbility.AbilityType.Self:
+
+				ability.UseAbility (this, PrimaryStat, SecondaryStat, mGameController);
+				AttackAble = false;                   
+
+			break;
+
+		case PlayerAbility.AbilityType.WorldTarget:
+
+				mWorldAbility = ability;
+				mSelectLocation = true;
+				AttackAble = false;                   
+
+			break;
+
+				}
+		}
 	
 	public void StartTurn(){
 		
 		mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = true;
 		TurnActive = true;
-		MovePhase = true;
+		MoveAble = true;
+		AttackAble = true;
 		print ("starting turn!");
 		mTurnTime = Time.time + TurnLimit;
 
@@ -187,6 +297,8 @@ public class Player : MonoBehaviour {
 		TurnActive = false;
 		MovePhase = false;
 		AttackPhase = false;
+		MoveAble = false;
+		AttackAble = false; 
 		print ("Ending turn!");
 	}
 	

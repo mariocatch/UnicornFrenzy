@@ -9,7 +9,7 @@ public class CyborgStomp : PlayerAbility {
 	private List<Enemy> mEnemyTargets = new List<Enemy>();
 	
 	
-	public override void UseAbility (Player source, int modify, GameController controller)
+	public override void UseAbility (Player source, int modify1, int modify2, GameController controller)
 	{
 		
 		Instantiate (Particles, source.transform.position, Quaternion.identity);
