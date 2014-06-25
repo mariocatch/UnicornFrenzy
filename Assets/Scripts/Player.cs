@@ -53,7 +53,7 @@ public class Player : MonoBehaviour {
 	[HideInInspector]
 	public bool MovePhase;
 	[HideInInspector]
-	public bool AttackPhase;
+	public bool FinishedMoving;
 	[HideInInspector]
 	public bool AttackAble;
 	[HideInInspector]
@@ -100,7 +100,7 @@ public class Player : MonoBehaviour {
 				}
 		if (TurnActive) {
 
-						if (!mSelectLocation && !MoveAble && !AttackAble) {
+						if (!mSelectLocation && !MoveAble && !AttackAble && !mMoving && FinishedMoving) {
 
 								EndTurn ();
 
@@ -215,19 +215,19 @@ public class Player : MonoBehaviour {
 
 			}
 
-			if (GUI.Button(new Rect(180, 45, 80, 20), "Ability1") && AttackAble && !MovePhase){
+			if (GUI.Button(new Rect(180, 45, 80, 20), "Ability1") && AttackAble && !MovePhase && FinishedMoving){
 				
 				AbilityHandler (Ability1);
 	
 			}
 
-			if (GUI.Button(new Rect(270, 45, 80, 20), "Ability2") && AttackAble && !MovePhase){
+			if (GUI.Button(new Rect(270, 45, 80, 20), "Ability2") && AttackAble && !MovePhase && FinishedMoving){
 				
 				AbilityHandler (Ability2);
 				
 			}
 
-			if (GUI.Button(new Rect(360, 45, 80, 20), "End Turn") && !mMoving){
+			if (GUI.Button(new Rect(360, 45, 80, 20), "End Turn") && FinishedMoving){
 				
 				EndTurn ();
 				
@@ -285,6 +285,7 @@ public class Player : MonoBehaviour {
 		TurnActive = true;
 		MoveAble = true;
 		AttackAble = true;
+		FinishedMoving = true;
 		print ("starting turn!");
 		mTurnTime = Time.time + TurnLimit;
 
@@ -296,7 +297,7 @@ public class Player : MonoBehaviour {
 		mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = false;
 		TurnActive = false;
 		MovePhase = false;
-		AttackPhase = false;
+		FinishedMoving = false;
 		MoveAble = false;
 		AttackAble = false; 
 		print ("Ending turn!");
@@ -315,6 +316,7 @@ public class Player : MonoBehaviour {
 			
 			mPathLength = p.GetTotalLength ();
 			if (mPathLength <= mMaxPathLength) {
+				FinishedMoving = false;
 				Path = p;
 				MovePhase = false;
 				mCurrentWaypoint = 0;
@@ -348,7 +350,7 @@ public class Player : MonoBehaviour {
 				
 				mMoving = false;
 				mCurrentWaypoint++;
-				AttackPhase = true;
+				FinishedMoving = true;
 			}
 		}
 	}
