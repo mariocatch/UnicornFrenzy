@@ -19,12 +19,23 @@ public class Enemy : MonoBehaviour {
 	public int DamageBonus;
 	public int DamageReducedTurns;
 	public int HitChance;
+	public GameController mGameController;
+	public AstarPath mAstarPath;
 
 	public List<Item> Drops;
 
+	public virtual void Start(){
+
+		mGameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameController> ();
+		mAstarPath = GameObject.FindGameObjectWithTag ("PathGen").GetComponent<AstarPath> ();
+		mGameController.Enemies.Add (this);
+
+		}
+
 	public virtual void TakeDamage(int damage){
 
-
+		Health -= damage;
+		CheckHealth ();
 
 	}
 
@@ -57,6 +68,29 @@ public class Enemy : MonoBehaviour {
 
 		}
 
+	public virtual void EndTurn(){
+
+		mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = false;
+		TurnActive = false;
+
+	}
+
+	public virtual void CheckHealth(){
+
+		if (Health <= 0) {
+
+			Death ();
+
+				}
+		}
+
+	public virtual void Death(){
+
+		mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = true;
+		mGameController.Enemies.Remove (this);
+
+		}
+
 	public virtual void MoveCharacter (Vector3 target)
 	{
 
@@ -75,15 +109,5 @@ public class Enemy : MonoBehaviour {
 		HitReducedTurns = turns;
 
 		}
-	
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 
 }

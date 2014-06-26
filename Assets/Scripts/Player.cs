@@ -284,7 +284,7 @@ public class Player : MonoBehaviour
 
 						GUI.Label (new Rect (225, 15, 80, 25), PlayerName);
 
-						if (GUI.Button (new Rect (90, 45, 80, 20), "Move") && MoveAble && !mSelectLocation) {
+						if (GUI.Button (new Rect (90, 45, 80, 20), "Move") && MoveAble && !mSelectLocation && !mFTargetSelect && !mETargetSelect) {
 
 								MovePhase = true;
 
@@ -320,19 +320,19 @@ public class Player : MonoBehaviour
 				switch (ability.Type) {
 
 				case PlayerAbility.AbilityType.EnemyTarget:
-										mTargetAbility = ability;
-										ARangeDisplay.transform.localScale = new Vector3 (ability.Range * 2, 0, ability.Range * 2);
-										ARangeDisplay.enabled = true;
-										mETargetSelect = true;
-										AttackAble = false;
+						mTargetAbility = ability;
+						ARangeDisplay.transform.localScale = new Vector3 (ability.Range * 2, 0, ability.Range * 2);
+						ARangeDisplay.enabled = true;
+						mETargetSelect = true;
+						AttackAble = false;
 						break;
 
 				case PlayerAbility.AbilityType.AllyTarget:
-										mTargetAbility = ability;
-										ARangeDisplay.transform.localScale = new Vector3 (ability.Range * 2, 0, ability.Range * 2);
-										ARangeDisplay.enabled = true;
-										mFTargetSelect = true;
-										AttackAble = false;
+						mTargetAbility = ability;
+						ARangeDisplay.transform.localScale = new Vector3 (ability.Range * 2, 0, ability.Range * 2);
+						ARangeDisplay.enabled = true;
+						mFTargetSelect = true;
+						AttackAble = false;
 						break;
 
 				case PlayerAbility.AbilityType.Self:
@@ -377,7 +377,9 @@ public class Player : MonoBehaviour
 				MovePhase = false;
 				FinishedMoving = false;
 				MoveAble = false;
-				AttackAble = false; 
+				AttackAble = false;
+				mFTargetSelect = false;
+				mETargetSelect = false;
 				print ("Ending turn!");
 		}
 	

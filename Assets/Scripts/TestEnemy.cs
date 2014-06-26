@@ -13,19 +13,15 @@ public class TestEnemy : Enemy
 		private bool mMoving;
 		private bool mMovePhase;
 		private Seeker mSeeker;
-		private AstarPath mAstarPath;
 		private List<Vector3> mPossibleMoves;
 		public ParticleSystem FlameParticles;
 		public ParticleSystem BloodParticles;
-		private GameController mGameController;
-
-		void Start ()
-		{
 		
+
+		public override void Start ()
+		{
+		base.Start ();
 				mSeeker = gameObject.GetComponent<Seeker> ();
-				mGameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameController> ();
-				mAstarPath = GameObject.FindGameObjectWithTag ("PathGen").GetComponent<AstarPath> ();
-				mGameController.Enemies.Add (this);
 		
 		}
 
@@ -101,11 +97,10 @@ public class TestEnemy : Enemy
 
 		}
 
-		void EndTurn ()
+		public override void EndTurn ()
 		{
+		base.EndTurn ();
 
-				mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = false;
-				TurnActive = false;
 				mMovePhase = false;
 		}
 
@@ -118,7 +113,7 @@ public class TestEnemy : Enemy
 		public void BasicAttack (Player target)
 		{
 		
-				int DamageDealt = (BasicAttackDamage + Random.Range (0, DamageBonus)) - DamageReducer;
+		int DamageDealt = (BasicAttackDamage + Random.Range (0, DamageBonus)) - DamageReducer;
 		target.Health -= DamageDealt;
 		RaycastHit hit;
 		if (Physics.Raycast (transform.position, transform.forward, out hit)) {
@@ -147,20 +142,11 @@ public class TestEnemy : Enemy
 
 		}
 
-		public override void TakeDamage (int damage)
-		{
-		
-				Health -= damage;
-				print ("Taking Damage!");
-				if (Health <= 0) {
-
- 						mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = true;
-						mGameController.Enemies.Remove (this);
-						Destroy (gameObject, .5f);
-
-				}
-		
-		}
+		public override void Death ()
+	{
+		base.Death ();
+		Destroy (gameObject, .5f);
+	}
 	
 		public void OnPathComplete (Path p)
 		{

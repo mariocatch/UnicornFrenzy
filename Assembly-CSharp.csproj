@@ -129,6 +129,7 @@
      <Compile Include="Assets\Scripts\CyborgStomp.cs" />
      <Compile Include="Assets\Scripts\CyborgTauntingBlow.cs" />
      <Compile Include="Assets\Scripts\Enemy.cs" />
+     <Compile Include="Assets\Scripts\EnemyTurret.cs" />
      <Compile Include="Assets\Scripts\EngiNuke.cs" />
      <Compile Include="Assets\Scripts\EngiTaser.cs" />
      <Compile Include="Assets\Scripts\GameController.cs" />
@@ -140,10 +141,13 @@
      <Compile Include="Assets\Scripts\PlayerCyborg.cs" />
      <Compile Include="Assets\Scripts\PlayerEngineer.cs" />
      <Compile Include="Assets\Scripts\PlayerMovementController.cs" />
+     <Compile Include="Assets\Scripts\PlayerSniper.cs" />
      <Compile Include="Assets\Scripts\RoomDatabase.cs" />
      <Compile Include="Assets\Scripts\RoomInfo.cs" />
      <Compile Include="Assets\Scripts\RoomPathController.cs" />
      <Compile Include="Assets\Scripts\SmoothCameraFollow.cs" />
+     <Compile Include="Assets\Scripts\SniperAimedShot.cs" />
+     <Compile Include="Assets\Scripts\SniperChargedShot.cs" />
      <Compile Include="Assets\Scripts\SpawnablesDatabase.cs" />
      <Compile Include="Assets\Scripts\StartingRoom.cs" />
      <Compile Include="Assets\Scripts\TestEnemy.cs" />
