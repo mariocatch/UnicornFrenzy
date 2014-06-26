@@ -6,6 +6,12 @@ public class SniperChargedShot : PlayerAbility {
 	private bool mCharged;
 	public ParticleSystem ChargeParticles;
 
+	void Start(){
+
+		mCharged = false;
+
+		}
+
 	public override void UseAbility (Player source, Enemy target, int modify1, int modify2)
 	{
 		if (mCharged) {
@@ -14,10 +20,10 @@ public class SniperChargedShot : PlayerAbility {
 						Instantiate (Particles, target.transform.position, target.transform.rotation);
 						mCharged = false;
 						source.ActionPoints -= ApCost;
-						ApCost = 2;
+						ApCost = 0;
 				} else {
 			mCharged = true;
-			ApCost = 0;
+			ApCost = 2;
 			Instantiate (ChargeParticles, source.transform.position, source.transform.rotation);
 				}
 	}

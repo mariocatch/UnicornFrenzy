@@ -123,6 +123,9 @@ public class Player : MonoBehaviour
 
 		public virtual void Update ()
 		{
+				if (Health <= 0) {
+					Death ();
+				}
 
 				if (ActionPoints > MaxActionPoints) {
 
@@ -274,6 +277,13 @@ public class Player : MonoBehaviour
 						ARangeDisplay.enabled = false;
 
 				}
+		}
+
+		public void Death(){
+
+		mGameController.Players.Remove (this);
+		Destroy (gameObject);
+		
 		}
 
 		void OnGUI ()

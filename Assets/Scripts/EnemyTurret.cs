@@ -23,7 +23,7 @@ public class EnemyTurret : Enemy
 				if (Target != null) {
 			
 						if (Vector3.Distance (transform.position, Target.transform.position) <= AttackRange) {
-								TurnTime = Time.time + 3;
+								TurnTime = Time.time + 2;
 								mAttacking = true;
 						} else {
 							
