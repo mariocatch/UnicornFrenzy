@@ -23,6 +23,7 @@ public class EnemyTurret : Enemy
 				if (Target != null) {
 			
 						if (Vector3.Distance (transform.position, Target.transform.position) <= AttackRange) {
+								TurnTime = Time.time + 3;
 								mAttacking = true;
 						} else {
 							
@@ -34,6 +35,7 @@ public class EnemyTurret : Enemy
 						
 												Target = mGameController.Players [i];
 												if (Vector3.Distance (transform.position, Target.transform.position) <= AttackRange) {
+														TurnTime = Time.time + 3;
 														mAttacking = true;
 														break;
 												}
@@ -52,6 +54,7 @@ public class EnemyTurret : Enemy
 					
 										Target = mGameController.Players [i];
 										if (Vector3.Distance (transform.position, Target.transform.position) <= AttackRange) {
+												TurnTime = Time.time + 3;
 												mAttacking = true;
 												break;
 										}
@@ -69,7 +72,7 @@ public class EnemyTurret : Enemy
 		public override void Death ()
 		{
 				base.Death ();
-				Destroy (gameObject, .5f);
+				Destroy (gameObject);
 		}
 
 		public void Update ()
@@ -91,7 +94,13 @@ public class EnemyTurret : Enemy
 								mAttacking = false;
 								}
 						}
-				} 
+				}
+
+			if (!mAttacking) {
+
+			EndTurn ();
+
+				}
 
 		}
 
@@ -108,7 +117,9 @@ public class EnemyTurret : Enemy
 		}
 		public override void EndTurn ()
 	{
-		mAttacking = false;
-		base.EndTurn ();
+		if (Time.time > TurnTime) {
+						mAttacking = false;
+						base.EndTurn ();
+				}
 	}
 }

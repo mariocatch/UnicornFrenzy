@@ -12,6 +12,8 @@ public class TestEnemy : Enemy
 		private int mNumTurns;
 		private bool mMoving;
 		private bool mMovePhase;
+		private bool mAttacked;
+		private bool mEndOfTurn;
 		private Seeker mSeeker;
 		private List<Vector3> mPossibleMoves;
 		public ParticleSystem FlameParticles;
@@ -37,14 +39,16 @@ public class TestEnemy : Enemy
 				if (Target != null) {
 
 						if (Vector3.Distance (transform.position, Target.transform.position) <= AttackRange) {
-
+						TurnTime = Time.time + 3;
+						mAttacked = true;
+						mEndOfTurn = true;
 								if (mNumTurns % 2 == 0) {
 									
 										FlameThrower (Target);
 
 								} else {
 
-									if (Random.Range (0, 5) > (HitChance - HitReducer)){
+									if (Random.Range (0, 5) < (HitChance - HitReducer)){
 											BasicAttack (Target);
 										} else {
 						print ("Missed!");
@@ -99,9 +103,12 @@ public class TestEnemy : Enemy
 
 		public override void EndTurn ()
 		{
-		base.EndTurn ();
-
-				mMovePhase = false;
+			if (Time.time > TurnTime) {
+						base.EndTurn ();
+						mAttacked = false;
+						mMovePhase = false;
+						mEndOfTurn = false;
+				}
 		}
 
 		public override void MoveCharacter (Vector3 target)
@@ -145,7 +152,7 @@ public class TestEnemy : Enemy
 		public override void Death ()
 	{
 		base.Death ();
-		Destroy (gameObject, .5f);
+		Destroy (gameObject);
 	}
 	
 		public void OnPathComplete (Path p)
@@ -160,9 +167,16 @@ public class TestEnemy : Enemy
 		void Update ()
 		{
 
-				if (TurnActive && !mMovePhase) {
+		if (mEndOfTurn) {
+
+			EndTurn ();
+
+				}
+
+		if (TurnActive && !mMovePhase && !mAttacked) {
 
 						if (Vector3.Distance (transform.position, Target.transform.position) <= AttackRange) {
+				mAttacked = true;
 				if (mNumTurns % 2 == 0) {
 					
 					FlameThrower (Target);
@@ -178,7 +192,7 @@ public class TestEnemy : Enemy
 
 						}
 
-				}
+				} 
 
 				if (Health <= 0) {
 

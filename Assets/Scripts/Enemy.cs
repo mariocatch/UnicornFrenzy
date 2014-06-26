@@ -9,20 +9,32 @@ public class Enemy : MonoBehaviour {
 	public float AttackRange;
 	public float MoveRange;
 	public float AggroRange;
+	[HideInInspector]
 	public bool TurnActive;
 	public int BasicAttackDamage;
+	[HideInInspector]
+	public float TurnTime;
+	[HideInInspector]
 	public Player Target;
+	[HideInInspector]
 	public int ImmobileTurns;
+	[HideInInspector]
 	public int HitReducer = 0;
+	[HideInInspector]
 	public int HitReducedTurns;
+	[HideInInspector]
 	public int DamageReducer = 0;
 	public int DamageBonus;
+	[HideInInspector]
 	public int DamageReducedTurns;
 	public int HitChance;
+	[HideInInspector]
 	public GameController mGameController;
+	[HideInInspector]
 	public AstarPath mAstarPath;
-
+	[HideInInspector]
 	public List<Item> Drops;
+	public ParticleSystem DeathParticles;
 
 	public virtual void Start(){
 
@@ -88,6 +100,7 @@ public class Enemy : MonoBehaviour {
 
 		mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = true;
 		mGameController.Enemies.Remove (this);
+		Instantiate (DeathParticles, transform.position, transform.rotation);
 
 		}
 

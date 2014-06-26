@@ -31,6 +31,7 @@ public class EngiNuke : PlayerAbility {
 				}
 
 		mEnemyTargets.Clear ();
+		source.ActionPoints -= ApCost;
 
 	}
 		

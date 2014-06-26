@@ -14,8 +14,10 @@ public class SniperChargedShot : PlayerAbility {
 						Instantiate (Particles, target.transform.position, target.transform.rotation);
 						mCharged = false;
 						source.ActionPoints -= ApCost;
+						ApCost = 2;
 				} else {
 			mCharged = true;
+			ApCost = 0;
 			Instantiate (ChargeParticles, source.transform.position, source.transform.rotation);
 				}
 	}

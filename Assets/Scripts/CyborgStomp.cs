@@ -31,6 +31,7 @@ public class CyborgStomp : PlayerAbility {
 		}
 		
 		mEnemyTargets.Clear ();
+		source.ActionPoints -= ApCost;
 		
 	}
 }

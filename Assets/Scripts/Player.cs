@@ -283,6 +283,7 @@ public class Player : MonoBehaviour
 				if (TurnActive) {
 
 						GUI.Label (new Rect (225, 15, 80, 25), PlayerName);
+						GUI.Label (new Rect (310, 15, 80, 25), ActionPoints.ToString());
 
 						if (GUI.Button (new Rect (90, 45, 80, 20), "Move") && MoveAble && !mSelectLocation && !mFTargetSelect && !mETargetSelect) {
 
@@ -292,13 +293,16 @@ public class Player : MonoBehaviour
 
 						if (GUI.Button (new Rect (180, 45, 80, 20), "Ability1") && AttackAble && !MovePhase && FinishedMoving) {
 				
-								AbilityHandler (Ability1);
+							if (ActionPoints >= Ability1.ApCost){	
+							AbilityHandler (Ability1);
+							}
 	
 						}
 
 						if (GUI.Button (new Rect (270, 45, 80, 20), "Ability2") && AttackAble && !MovePhase && FinishedMoving) {
-				
+								if (ActionPoints >= Ability2.ApCost){
 								AbilityHandler (Ability2);
+								}
 				
 						}
 
