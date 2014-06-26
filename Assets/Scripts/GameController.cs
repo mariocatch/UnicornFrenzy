@@ -18,6 +18,7 @@ public class GameController : MonoBehaviour
 		private bool mNodesChanged;
 		private bool mPlayersTurn = true;
 		private bool mEnemiesTurn;
+		private bool mGameOver;
 
 		void Start ()
 		{
@@ -29,7 +30,14 @@ public class GameController : MonoBehaviour
 
 		void Update ()
 		{
-
+				if (Players.Count == 0) {
+					
+						if (!mGameOver) {
+								mGameOver = true;
+						} else {
+								return;
+						}
+				}
 				//Checks if the nodes have been changed, waits for a brief moment, then scans the grid.
 				if (mNodesChanged) {
 
@@ -95,6 +103,20 @@ public class GameController : MonoBehaviour
 								mPlayersTurn = true;
 								Players [mCurrentPlayer].StartTurn ();
 						}
+				}
+
+		}
+
+		void OnGUI(){
+
+		if (mGameOver) {
+
+			if (GUI.Button (new Rect((Screen.width / 2) - 50, (Screen.height / 2) - 50, 100, 100), "Restart")){
+
+				Application.LoadLevel (0);
+
+			}
+
 				}
 
 		}
