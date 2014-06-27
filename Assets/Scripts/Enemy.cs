@@ -35,6 +35,7 @@ public class Enemy : MonoBehaviour {
 	[HideInInspector]
 	public List<Item> Drops;
 	public ParticleSystem DeathParticles;
+	public ParticleSystem BasicAttackParticles;
 
 	public virtual void Start(){
 
@@ -52,6 +53,8 @@ public class Enemy : MonoBehaviour {
 	}
 
 	public virtual void StartTurn(){
+
+		TurnActive = true;
 
 		if (DamageReducedTurns > 0) {
 
@@ -76,7 +79,6 @@ public class Enemy : MonoBehaviour {
 			}
 			
 		}
-
 
 		}
 

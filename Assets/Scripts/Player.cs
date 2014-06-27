@@ -292,6 +292,7 @@ public class Player : MonoBehaviour
 				//Activates player specific Gui elements during the respective players turn
 				if (TurnActive) {
 
+						GUI.Label (new Rect (140, 15, 80, 25), Health.ToString());
 						GUI.Label (new Rect (225, 15, 80, 25), PlayerName);
 						GUI.Label (new Rect (310, 15, 80, 25), ActionPoints.ToString());
 

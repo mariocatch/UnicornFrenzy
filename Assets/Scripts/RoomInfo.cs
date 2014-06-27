@@ -4,13 +4,22 @@ using System.Collections;
 
 public class RoomInfo : MonoBehaviour {
 
-	public bool NorthDoor, SouthDoor, EastDoor, WestDoor, DeadEnd;
+	public bool NorthDoor, SouthDoor, EastDoor, WestDoor, DeadEnd, EndRoom;
 
 	public CreateByExplore NorthExit, SouthExit, EastExit, WestExit;
 
 	public List<Transform> EnemySpawns;
 	public List<Transform> ItemSpawns;
 	public List<Transform> TrapSpawns;
+
+	public enum EndRoomType
+		{
+			Item,
+			MiniBoss,
+			Boss,
+			Mix
+		};
+	public EndRoomType RoomType;
 
 	private SpawnablesDatabase mSpawnablesDatabase;
 
@@ -23,13 +32,26 @@ public class RoomInfo : MonoBehaviour {
 
 		//Checks to see if the room contains enemies items and trap locations before spawning them in
 		if (EnemySpawns.Count != 0) {
-			SpawnEnemies ();
+			SpawnEnemies (mSpawnablesDatabase.SmallEnemies);
 				}
 		if (ItemSpawns.Count != 0) {
-			SpawnItems ();
+			//SpawnItems ();
 				}
 		if (TrapSpawns.Count != 0) {
-			SpawnTrap ();
+			// SpawnTrap ();
+				}
+		if (EndRoom) {
+			// Spawn End Room special based on type
+
+			switch (RoomType){
+
+			case EndRoomType.Boss:
+				SpawnEnemies (mSpawnablesDatabase.Bosses);
+				break;
+			default:
+				break;
+				}
+
 				}
 	}
 
@@ -42,35 +64,19 @@ public class RoomInfo : MonoBehaviour {
 
 		}
 	
-	void SpawnEnemies(){
-		
-		int enemSpawnLoc = Random.Range(0, EnemySpawns.Count);
-		
-		int numEnemies = Random.Range(1, 3);
+	void SpawnEnemies(List<GameObject> enemies){
 
-		//If the number of enemies is greater than 1 (only 2 possible at the time of this comment) it will ensure that they don't spawn atop one another
-		if (numEnemies > 1){
+		
+		int numEnemies = Random.Range(0, EnemySpawns.Count);
+		List<Transform> PossibleSpawnLocs = new List<Transform>();
+		PossibleSpawnLocs = EnemySpawns;
 
-			//Spawns a random enemy from the enemy list in a random enemy location within the room
-			Instantiate ( mSpawnablesDatabase.SmallEnemies[Random.Range(0, mSpawnablesDatabase.SmallEnemies.Count)], EnemySpawns[enemSpawnLoc].position, EnemySpawns[enemSpawnLoc].rotation);
-			
-			int nextSpawnLoc = Random.Range(0, EnemySpawns.Count);
-			
-			while (nextSpawnLoc == numEnemies){
+		for (int i = 0; i < numEnemies + 1; i++) {
 				
-				nextSpawnLoc = Random.Range(0, EnemySpawns.Count);
-				
-			}
-			//Spawns a random enemy from the enemy list in a random enemy location within the room, that isn't the same as the previous one
-			Instantiate ( mSpawnablesDatabase.SmallEnemies[Random.Range(0, mSpawnablesDatabase.SmallEnemies.Count)], EnemySpawns[nextSpawnLoc].position, EnemySpawns[nextSpawnLoc].rotation);
-			
-		} else {
-
-			//Spawns a random enemy from the enemy list in a random enemy location within the room
-			Instantiate ( mSpawnablesDatabase.SmallEnemies[Random.Range(0, mSpawnablesDatabase.SmallEnemies.Count)], EnemySpawns[enemSpawnLoc].position, EnemySpawns[enemSpawnLoc].rotation);
-			
-		}
-		
+				int enemSpawnLoc = Random.Range(0, PossibleSpawnLocs.Count);
+			Instantiate ( enemies[Random.Range(0, enemies.Count)], PossibleSpawnLocs[enemSpawnLoc].position, PossibleSpawnLocs[enemSpawnLoc].rotation);
+				PossibleSpawnLocs.RemoveAt(enemSpawnLoc);
+				}	
 	}
 	
 	void SpawnTrap(){

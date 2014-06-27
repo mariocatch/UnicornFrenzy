@@ -9,5 +9,6 @@ public class SpawnablesDatabase : MonoBehaviour {
 	public List<GameObject> SmallEnemies;
 	public List<GameObject> SpawnableItems;
 	public List<GameObject> SpawnableTraps;
+	public List<GameObject> Bosses;
 
 }

@@ -129,7 +129,9 @@
      <Compile Include="Assets\Scripts\CyborgStomp.cs" />
      <Compile Include="Assets\Scripts\CyborgTauntingBlow.cs" />
      <Compile Include="Assets\Scripts\Enemy.cs" />
+     <Compile Include="Assets\Scripts\EnemyTestBoss.cs" />
      <Compile Include="Assets\Scripts\EnemyTurret.cs" />
+     <Compile Include="Assets\Scripts\EngiHeal.cs" />
      <Compile Include="Assets\Scripts\EngiNuke.cs" />
      <Compile Include="Assets\Scripts\EngiTaser.cs" />
      <Compile Include="Assets\Scripts\GameController.cs" />

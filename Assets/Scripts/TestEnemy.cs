@@ -33,7 +33,6 @@ public class TestEnemy : Enemy
 
 				mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = true;
 				mNumTurns ++;
-				TurnActive = true;
 				mMovePhase = true;
 
 				if (Target != null) {

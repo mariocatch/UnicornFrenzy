@@ -15,10 +15,16 @@ public class GameController : MonoBehaviour
 		private float mScanDelay = .5f;
 		private int mCurrentPlayer;
 		private int mCurrentEnemy;
+		public int RoomsNeeded;
+		[HideInInspector]
+		public int RoomsSpawned;
+		[HideInInspector]
+		public bool EndRoomSpawned;
 		private bool mNodesChanged;
 		private bool mPlayersTurn = true;
 		private bool mEnemiesTurn;
 		private bool mGameOver;
+		public bool mGameWon;
 
 		void Start ()
 		{
@@ -30,6 +36,7 @@ public class GameController : MonoBehaviour
 
 		void Update ()
 		{
+		  
 				if (Players.Count == 0) {
 					
 						if (!mGameOver) {
@@ -111,13 +118,23 @@ public class GameController : MonoBehaviour
 
 		if (mGameOver) {
 
-			if (GUI.Button (new Rect((Screen.width / 2) - 50, (Screen.height / 2) - 50, 100, 100), "Restart")){
+						if (GUI.Button (new Rect ((Screen.width / 2) - 50, (Screen.height / 2) - 50, 200, 300), "Restart?")) {
 
-				Application.LoadLevel (0);
+								Application.LoadLevel (0);
+
+						}
+				}
+		
+		if (mGameWon) {
+
+				if (GUI.Button (new Rect((Screen.width / 2) - 50, (Screen.height / 2) - 50, 200, 300), "You win! Restart?")){
+					
+					Application.LoadLevel (0);
+					
+				}
 
 			}
 
-				}
 
 		}
 

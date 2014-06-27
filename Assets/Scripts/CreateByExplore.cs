@@ -4,13 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class CreateByExplore : MonoBehaviour {
-
+	
 	public bool SpawnerActive;
 	private int mPositionOffset = 3;
 	private int mRoomOffset = 40;
 	public int mMaxWidth;
 	public int mMaxHeight;
 	public int mRoomWidth;
+	private bool nDoor = false, sDoor = false, eDoor = false, wDoor = false;
+	private bool disableNDoor = false, disableSDoor = false, disableEDoor = false ,disableWDoor = false;
+	private bool nBlocked = false, sBlocked = false, eBlocked = false, wBlocked = false;
 
 	private RoomDatabase roomDatabase;
 	private GameController gameController;
@@ -55,11 +58,6 @@ public class CreateByExplore : MonoBehaviour {
 	void SpawnNextRoom(Vector3 roomPos){
 
 
-		//Room has to be chosen based upon surrounding rooms information
-		//Create variables to hold door information
-		bool nDoor = false, sDoor = false, eDoor = false, wDoor = false;
-		bool disableNDoor = false, disableSDoor = false, disableEDoor = false ,disableWDoor = false;
-		bool nBlocked = false, sBlocked = false, eBlocked = false, wBlocked = false;
 		roomDatabase = GameObject.FindGameObjectWithTag ("RoomDatabase").GetComponent<RoomDatabase> ();
 		gameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameController> ();
 		//Cast Rays at the centerpoint of the surrounding rooms
@@ -136,59 +134,82 @@ public class CreateByExplore : MonoBehaviour {
 			print ("No Western Room Found!");
 		}
 
-		//search through room list and narrowdown to rooms that match the criteria
-		List<RoomInfo> PotentialSpawns = roomDatabase.Rooms;
+		List<RoomInfo> PotentialSpawns = new List<RoomInfo>();
 
+		//Check if the end room can be spawned
+		if (gameController.RoomsSpawned >= gameController.RoomsNeeded && !gameController.EndRoomSpawned) {
+						//if so, ensure that it meets the requirements for spawning
+						//if it does, spawn the room
+						
+						PotentialSpawns = NarrowRooms (roomDatabase.EndRooms);
 
-		if (nDoor) {
-						PotentialSpawns = PotentialSpawns.Where (x => x.NorthDoor == true).ToList();
+						//if it does not, spawn another room as normal.
+				} 
+		if (PotentialSpawns.Count == 0) {
+						//search through room list and narrowdown to rooms that match the criteria
+						PotentialSpawns = NarrowRooms (roomDatabase.Rooms);
+						
+				} else {
+			gameController.EndRoomSpawned = true;
 				}
-		if (sDoor) {
-						PotentialSpawns = PotentialSpawns.Where (x => x.SouthDoor == true).ToList();
-				}
-		if (wDoor) {
-						PotentialSpawns = PotentialSpawns.Where (x => x.WestDoor == true).ToList();
-		}
-		if (eDoor) {
-						PotentialSpawns = PotentialSpawns.Where (x => x.EastDoor == true).ToList();
-		}
-		if (nBlocked) {
-						PotentialSpawns = PotentialSpawns.Where (x => x.NorthDoor == false).ToList();
-				}
-		if (sBlocked) {
-						PotentialSpawns = PotentialSpawns.Where (x => x.SouthDoor == false).ToList();
-		}
-		if (wBlocked) {
-						PotentialSpawns = PotentialSpawns.Where (x => x.WestDoor == false).ToList();
-		}
-		if (eBlocked) {
-						PotentialSpawns = PotentialSpawns.Where (x => x.EastDoor == false).ToList();
-		}
+						int RandomRoom = Random.Range (0, PotentialSpawns.Count);
+						//spawn room
+						GameObject SpawnedRoom = Instantiate (PotentialSpawns [RandomRoom].gameObject, roomPos, transform.rotation) as GameObject;
+						gameController.RoomsSpawned++;
+						SpawnedRoom.GetComponent<RoomInfo> ().SetExits ();
 
-		int RandomRoom = Random.Range (0, PotentialSpawns.Count);
-		//spawn room
-		GameObject SpawnedRoom = Instantiate (PotentialSpawns [RandomRoom].gameObject, roomPos, transform.rotation) as GameObject;
-		SpawnedRoom.GetComponent<RoomInfo>().SetExits ();
+						//disable exit spawners as to not create rooms over exiting ones
+						if (disableNDoor) {
+								SpawnedRoom.GetComponent<RoomInfo> ().NorthExit.SpawnerActive = false;
+						}
+						if (disableSDoor) {
+								SpawnedRoom.GetComponent<RoomInfo> ().SouthExit.SpawnerActive = false;
+						}
+						if (disableEDoor) {
+								SpawnedRoom.GetComponent<RoomInfo> ().EastExit.SpawnerActive = false;
+						}
+						if (disableWDoor) {
+								SpawnedRoom.GetComponent<RoomInfo> ().WestExit.SpawnerActive = false;
+						}
 
-		//disable exit spawners as to not create rooms over exiting ones
-		if (disableNDoor) {
-			SpawnedRoom.GetComponent<RoomInfo>().NorthExit.SpawnerActive = false;
-				}
-		if (disableSDoor) {
-			SpawnedRoom.GetComponent<RoomInfo>().SouthExit.SpawnerActive = false;
-				}
-		if (disableEDoor) {
-			SpawnedRoom.GetComponent<RoomInfo>().EastExit.SpawnerActive = false;
-				}
-		if (disableWDoor) {
-			SpawnedRoom.GetComponent<RoomInfo>().WestExit.SpawnerActive = false;
-				}
-
-
+				
 
 		//Rescan the grid
 		gameController.ScanPath ();
 
 	}
+
+	public List<RoomInfo> NarrowRooms (List<RoomInfo> Rooms){
+
+		List<RoomInfo> NarrowedRooms = Rooms;
+
+		if (nDoor) {
+			NarrowedRooms = NarrowedRooms.Where (x => x.NorthDoor == true).ToList ();
+		}
+		if (sDoor) {
+			NarrowedRooms = NarrowedRooms.Where (x => x.SouthDoor == true).ToList ();
+		}
+		if (wDoor) {
+			NarrowedRooms = NarrowedRooms.Where (x => x.WestDoor == true).ToList ();
+		}
+		if (eDoor) {
+			NarrowedRooms = NarrowedRooms.Where (x => x.EastDoor == true).ToList ();
+		}
+		if (nBlocked) {
+			NarrowedRooms = NarrowedRooms.Where (x => x.NorthDoor == false).ToList ();
+		}
+		if (sBlocked) {
+			NarrowedRooms = NarrowedRooms.Where (x => x.SouthDoor == false).ToList ();
+		}
+		if (wBlocked) {
+			NarrowedRooms = NarrowedRooms.Where (x => x.WestDoor == false).ToList ();
+		}
+		if (eBlocked) {
+			NarrowedRooms = NarrowedRooms.Where (x => x.EastDoor == false).ToList ();
+		}
+
+		return NarrowedRooms;
+
+		}
 
 }

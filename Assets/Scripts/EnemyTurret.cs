@@ -17,8 +17,6 @@ public class EnemyTurret : Enemy
 		public override void StartTurn ()
 		{
 				base.StartTurn ();
-
-				TurnActive = true;
 		
 				if (Target != null) {
 			
