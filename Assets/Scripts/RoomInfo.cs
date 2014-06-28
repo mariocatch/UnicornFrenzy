@@ -31,6 +31,20 @@ public class RoomInfo : MonoBehaviour {
 		mSpawnablesDatabase = GameObject.FindGameObjectWithTag("GameController").GetComponent<SpawnablesDatabase>();
 
 		//Checks to see if the room contains enemies items and trap locations before spawning them in
+		if (EndRoom) {
+			// Spawn End Room special based on type
+			
+			switch (RoomType){
+				
+			case EndRoomType.Boss:
+				SpawnEnemies (mSpawnablesDatabase.Bosses);
+				break;
+			default:
+				break;
+			}
+			
+		}
+
 		if (EnemySpawns.Count != 0) {
 			SpawnEnemies (mSpawnablesDatabase.SmallEnemies);
 				}
@@ -39,19 +53,6 @@ public class RoomInfo : MonoBehaviour {
 				}
 		if (TrapSpawns.Count != 0) {
 			// SpawnTrap ();
-				}
-		if (EndRoom) {
-			// Spawn End Room special based on type
-
-			switch (RoomType){
-
-			case EndRoomType.Boss:
-				SpawnEnemies (mSpawnablesDatabase.Bosses);
-				break;
-			default:
-				break;
-				}
-
 				}
 	}
 
