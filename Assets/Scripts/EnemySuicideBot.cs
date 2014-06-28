@@ -54,6 +54,7 @@ public class EnemySuicideBot : Enemy {
 
 		if (mExplode && Time.time > TurnTime) {
 
+			TurnActive = false;
 			Death();
 
 				}
@@ -110,15 +111,15 @@ public class EnemySuicideBot : Enemy {
 		//Checks if the player is moving or not, then moves the player if they need to be
 		if (!mMoving) {
 			transform.LookAt(new Vector3(mPath.vectorPath[mCurrentWaypoint].x, 1, mPath.vectorPath[mCurrentWaypoint].z));
-			iTween.MoveTo (gameObject, mPath.vectorPath [mCurrentWaypoint] + new Vector3 (0, 1, 0), 2f);
+			iTween.MoveTo (gameObject, mPath.vectorPath [mCurrentWaypoint] + new Vector3 (0, 0, 0), 2f);
 			mMoving = true;
 		} else if (mMoving) {
 			
 			//If the next waypoint isn't the last one, allows for corners to be cut for smoother looking motion
-			if (Vector3.Distance (transform.position, mPath.vectorPath [mCurrentWaypoint] + new Vector3 (0, 1, 0)) < 3f && mCurrentWaypoint < mPath.vectorPath.Count - 1) {
+			if (Vector3.Distance (transform.position, mPath.vectorPath [mCurrentWaypoint] + new Vector3 (0, 0, 0)) < 3f && mCurrentWaypoint < mPath.vectorPath.Count - 1) {
 				mMoving = false;
 				mCurrentWaypoint++;
-			} else if (transform.position == mPath.vectorPath [mCurrentWaypoint] + new Vector3 (0, 1, 0) && mCurrentWaypoint == mPath.vectorPath.Count - 1) {
+			} else if (transform.position == mPath.vectorPath [mCurrentWaypoint] + new Vector3 (0, 0, 0) && mCurrentWaypoint == mPath.vectorPath.Count - 1) {
 				
 				mMoving = false;
 				mCurrentWaypoint++;
