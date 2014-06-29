@@ -53,7 +53,6 @@ public class EnemySuicideBot : Enemy {
 	void Update(){
 
 		if (mExplode && Time.time > TurnTime) {
-
 			TurnActive = false;
 			Death();
 
@@ -119,7 +118,7 @@ public class EnemySuicideBot : Enemy {
 			if (Vector3.Distance (transform.position, mPath.vectorPath [mCurrentWaypoint] + new Vector3 (0, 0, 0)) < 3f && mCurrentWaypoint < mPath.vectorPath.Count - 1) {
 				mMoving = false;
 				mCurrentWaypoint++;
-			} else if (transform.position == mPath.vectorPath [mCurrentWaypoint] + new Vector3 (0, 0, 0) && mCurrentWaypoint == mPath.vectorPath.Count - 1) {
+			} else if (transform.position == mPath.vectorPath [mCurrentWaypoint] + new Vector3 (0, 1, 0) && mCurrentWaypoint == mPath.vectorPath.Count - 1) {
 				
 				mMoving = false;
 				mCurrentWaypoint++;

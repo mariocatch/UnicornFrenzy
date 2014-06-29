@@ -101,7 +101,7 @@ public class Enemy : MonoBehaviour {
 	public virtual void Death(){
 
 		mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = true;
-		mGameController.Enemies.Remove (this);
+		mGameController.RemoveEnemy (this);
 		Instantiate (DeathParticles, transform.position, transform.rotation);
 
 		}

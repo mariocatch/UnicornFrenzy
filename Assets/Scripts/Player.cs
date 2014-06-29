@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Pathfinding;
 
 public class Player : MonoBehaviour
@@ -40,6 +41,8 @@ public class Player : MonoBehaviour
 		public int MaxActionPoints = 6;
 
 		//Navigation variables
+		[HideInInspector]
+		public List<GraphNode> Nodes = new List<GraphNode> ();
 		[HideInInspector]
 		public Seeker
 				mSeeker;

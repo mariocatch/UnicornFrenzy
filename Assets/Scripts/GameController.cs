@@ -109,6 +109,7 @@ public class GameController : MonoBehaviour
 								mEnemiesTurn = false;
 								mPlayersTurn = true;
 								Players [mCurrentPlayer].StartTurn ();
+								
 						}
 				}
 
@@ -154,6 +155,17 @@ public class GameController : MonoBehaviour
 				mTimeToScan = Time.time + mScanDelay;
 				mNodesChanged = true;
 
+
+		}
+
+		public void RemoveEnemy (Enemy enemy){
+
+		if (mEnemiesTurn && mCurrentEnemy != 0) {
+						Enemies.Remove (enemy);
+						mCurrentEnemy -= 1;
+				} else {
+						Enemies.Remove (enemy);
+				}
 
 		}
 
