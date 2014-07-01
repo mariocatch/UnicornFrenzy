@@ -96,14 +96,23 @@ namespace Pathfinding {
 					//Otherwise, just stand still (this ensures gravity is applied)
 					dir = Vector3.zero;
 				}
-				
+
+				if ( this.rvoController != null ) {
+					rvoController.Move ( dir );
+					velocity = rvoController.velocity;
+				} else 
 				if (navController != null) {
-				} else if (controller != null)
+	#if FALSE
+					navController.SimpleMove (GetFeetPosition(), dir);
+	#endif
+					velocity = Vector3.zero;
+				} else if (controller != null) {
 					controller.SimpleMove (dir);
-				else
+					velocity = controller.velocity;
+				} else {
 					Debug.LogWarning ("No NavmeshController or CharacterController attached to GameObject");
-				
-				velocity = controller.velocity;
+					velocity = Vector3.zero;
+				}
 			} else {
 				velocity = Vector3.zero;
 			}

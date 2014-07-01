@@ -33,14 +33,21 @@ public class Player : MonoBehaviour
 		//Resource variables
 		public int Health;
 		[HideInInspector]
-		public int
-				ActionPoints;
+		public int ActionPoints;
 
 		//Resource maximums
 		public int MaxHealth;
 		public int MaxActionPoints = 6;
 
 		//Navigation variables
+		[HideInInspector]
+		public List<GameObject> RenderedGrid = new List<GameObject> ();
+		[HideInInspector]
+		public List<GraphNode> MoveableNodes;
+		[HideInInspector]
+		public Material SquareMat;
+		[HideInInspector]
+		public Vector3 PathOffset;
 		[HideInInspector]
 		public List<GraphNode> Nodes = new List<GraphNode> ();
 		[HideInInspector]
@@ -109,7 +116,6 @@ public class Player : MonoBehaviour
 
 		//Range displays
 		public MeshRenderer ARangeDisplay;
-		public MeshRenderer MRangeDisplay;
 
 		//Abilities
 		public List<PlayerAbility> Abilities;
@@ -121,7 +127,9 @@ public class Player : MonoBehaviour
 				mSeeker = gameObject.GetComponent<Seeker> ();
 				mAstarPath = GameObject.FindGameObjectWithTag ("PathGen").GetComponent<AstarPath> ();
 				mGameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameController> ();
-		
+				PathOffset = new Vector3 (0, .1f, 0);
+				SquareMat = Resources.Load ("pathSquare", typeof(Material)) as Material;
+			
 		}
 
 		public virtual void Update ()
@@ -142,8 +150,6 @@ public class Player : MonoBehaviour
 								EndTurn ();
 
 						}
-
-						MRangeDisplay.enabled = MovePhase;
 
 		
 						if (Health > MaxHealth) {
@@ -222,10 +228,14 @@ public class Player : MonoBehaviour
 					
 												if (playerPlane.Raycast (ray, out hitdist)) {
 														Vector3 targetPoint = ray.GetPoint (hitdist);
-						
-														if (Vector3.Distance (transform.position, targetPoint) <= Speed) { 
+														GraphNode targetNode = mAstarPath.astarData.gridGraph.GetNearest(targetPoint).node;
+														if (targetNode != null) { 
+														GraphNode match = MoveableNodes.FirstOrDefault (x => x.position == targetNode.position);
+															if (match != null){
 																MoveCharacter (targetPoint);
+																ClearRender();
 																MoveAble = false;
+															}
 														}
 												}
 										}
@@ -276,9 +286,7 @@ public class Player : MonoBehaviour
 		
 						}
 				} else {
-						MRangeDisplay.enabled = false;
 						ARangeDisplay.enabled = false;
-
 				}
 		}
 
@@ -299,11 +307,12 @@ public class Player : MonoBehaviour
 						GUI.Label (new Rect (225, 15, 80, 25), PlayerName);
 						GUI.Label (new Rect (310, 15, 80, 25), ActionPoints.ToString());
 
-						if (GUI.Button (new Rect (90, 45, 80, 20), "Move") && MoveAble && !mSelectLocation && !mFTargetSelect && !mETargetSelect) {
+						if (GUI.Button (new Rect (90, 45, 80, 20), "Move") && MoveAble && !mSelectLocation && !mFTargetSelect && !mETargetSelect && !MovePhase) {
 
 								MovePhase = true;
-
-						}
+								StartCoroutine(Constant());
+				
+				}
 
 						if (GUI.Button (new Rect (180, 45, 80, 20), "Ability1") && AttackAble && !MovePhase && FinishedMoving) {
 				
@@ -375,7 +384,6 @@ public class Player : MonoBehaviour
 	
 		public void StartTurn ()
 		{
-		
 				mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = true;
 				TurnActive = true;
 				MoveAble = true;
@@ -385,11 +393,119 @@ public class Player : MonoBehaviour
 				mTurnTime = Time.time + TurnLimit;
 
 		}
+
+		public void OnConstantPathComplete(Path p){
+
+		ConstantPath constPath = p as ConstantPath;
+		List<GraphNode> nodes = constPath.allNodes;
+		MoveableNodes = nodes;
+		
+		Mesh mesh = new Mesh ();
+		
+		List<Vector3> verts = new List<Vector3>();
+		
+		bool drawRaysInstead = false;
+		
+		List<Vector3> pts = Pathfinding.PathUtilities.GetPointsOnNodes (nodes, 20, 0);
+		Vector3 avg = Vector3.zero;
+		for (int i=0;i<pts.Count;i++) {
+			Debug.DrawRay (pts[i], Vector3.up*5, Color.red, 3);
+			avg += pts[i];
+		}
+		
+		if (pts.Count > 0) avg /= pts.Count;
+		
+		for (int i=0;i<pts.Count;i++) {
+			pts[i] -= avg;
+		}
+		
+		Pathfinding.PathUtilities.GetPointsAroundPoint (transform.position, AstarPath.active.astarData.graphs[0] as IRaycastableGraph, pts, 0, 1);
+		
+		for (int i=0;i<pts.Count;i++) {
+			Debug.DrawRay (pts[i], Vector3.up*5, Color.blue, 3);
+		}
+		
+		//This will loop through the nodes from furthest away to nearest, not really necessary... but why not :D
+		//Note that the reverse does not, as common sense would suggest, loop through from the closest to the furthest away
+		//since is might contain duplicates and only the node duplicate placed at the highest index is guarenteed to be ordered correctly.
+		for (int i=nodes.Count-1;i>=0;i--) {
+			
+			Vector3 pos = (Vector3)nodes[i].position+PathOffset;
+			if (verts.Count	== 65000 && !drawRaysInstead) {
+				Debug.LogError ("Too many nodes, rendering a mesh would throw 65K vertex error. Using Debug.DrawRay instead for the rest of the nodes");
+				drawRaysInstead = true;
+			}
+			
+			if (drawRaysInstead) {
+				Debug.DrawRay (pos,Vector3.up,Color.blue);
+				continue;
+			}
+			
+			//Add vertices in a square
+			
+			GridGraph gg = AstarData.GetGraph (nodes[i]) as GridGraph;
+			float scale = 1F;
+			
+			if (gg != null) scale = gg.nodeSize;
+			
+			verts.Add (pos+new Vector3 (-0.5F,0,-0.5F)*scale);
+			verts.Add (pos+new Vector3 (0.5F,0,-0.5F)*scale);
+			verts.Add (pos+new Vector3 (-0.5F,0,0.5F)*scale);
+			verts.Add (pos+new Vector3 (0.5F,0,0.5F)*scale);
+		}
+		
+		//Build triangles for the squares
+		Vector3[] vs = verts.ToArray ();
+		int[] tris = new int[(3*vs.Length)/2];
+		for (int i=0, j=0;i<vs.Length;j+=6, i+=4) {
+			tris[j+0] = i;
+			tris[j+1] = i+1;
+			tris[j+2] = i+2;
+			
+			tris[j+3] = i+1;
+			tris[j+4] = i+3;
+			tris[j+5] = i+2;
+		}
+		
+		Vector2[] uv = new Vector2[vs.Length];
+		//Set up some basic UV
+		for (int i=0;i<uv.Length;i+=4) {
+			uv[i] = new Vector2(0,0);
+			uv[i+1] = new Vector2(1,0);
+			uv[i+2] = new Vector2(0,1);
+			uv[i+3] = new Vector2(1,1);
+		}
+		
+		mesh.vertices = vs;
+		mesh.triangles = tris;
+		mesh.uv = uv;
+		mesh.RecalculateNormals ();
+		
+		GameObject go = new GameObject("Mesh",typeof(MeshRenderer),typeof(MeshFilter));
+		MeshFilter fi = go.GetComponent<MeshFilter>();
+		fi.mesh = mesh;
+		MeshRenderer re = go.GetComponent<MeshRenderer>();
+		re.material = SquareMat;
+		
+		RenderedGrid.Add (go);
+
+		}
+
+		public void ClearRender(){
+
+		for (int i=0; i<RenderedGrid.Count; i++) {
+
+			Destroy (RenderedGrid[i]);
+
+				}
+			RenderedGrid.Clear ();
+		}
 	
 		public void EndTurn ()
 		{
 
 				//Ensures all phases are false and sets the players turn to false for the game controller
+				ClearRender ();
 				mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = false;
 				TurnActive = false;
 				MovePhase = false;
@@ -451,6 +567,13 @@ public class Player : MonoBehaviour
 								FinishedMoving = true;
 						}
 				}
+		}
+
+		public IEnumerator Constant () {
+			ConstantPath constPath = ConstantPath.Construct (transform.position, (Speed / 2) * 3000, OnConstantPathComplete);
+			AstarPath.StartPath (constPath);
+			yield return constPath.WaitForPath();
+			Debug.Log (constPath.pathID + " " + constPath.allNodes.Count);
 		}
 	
 	

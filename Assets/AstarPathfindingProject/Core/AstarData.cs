@@ -27,24 +27,39 @@ namespace Pathfinding {
 		[System.NonSerialized]
 		public NavMeshGraph navmesh; 	/**< Shortcut to the first NavMeshGraph. Updated at scanning time. This is the only reference to NavMeshGraph in the core pathfinding scripts */
 		
+#if !ASTAR_NO_GRID_GRAPH
 		[System.NonSerialized]
 		public GridGraph gridGraph;		/**< Shortcut to the first GridGraph. Updated at scanning time. This is the only reference to GridGraph in the core pathfinding scripts */
-		
+#endif
+
+#if !ASTAR_NO_POINT_GRAPH
 		[System.NonSerialized]
 		public PointGraph pointGraph;		/**< Shortcut to the first PointGraph. Updated at scanning time. This is the only reference to PointGraph in the core pathfinding scripts */
-		
+#endif
+
+		[System.NonSerialized]
+		/** Shortcut to the first RecastGraph. Updated at scanning time. This is the only reference to RecastGraph in the core pathfinding scripts.
+		 * \astarpro
+		 */
+		public RecastGraph recastGraph;
 		
 		/** All supported graph types. Populated through reflection search */
 		public System.Type[] graphTypes = null;
 		
-#if ASTAR_FAST_NO_EXCEPTIONS
+#if ASTAR_FAST_NO_EXCEPTIONS || NETFX_CORE
 		/** Graph types to use when building with Fast But No Exceptions for iPhone.
 		 * If you add any custom graph types, you need to add them to this hard-coded list.
 		 */
 		public static readonly System.Type[] DefaultGraphTypes = new System.Type[] {
+#if !ASTAR_NO_GRID_GRAPH
 			typeof(GridGraph),
+#endif
+#if !ASTAR_NO_POINT_GRAPH
 			typeof(PointGraph),
-			typeof(NavMeshGraph)
+#endif
+			typeof(NavMeshGraph),
+			typeof(RecastGraph),
+			typeof(LayerGridGraph)
 		};
 #endif
 		
@@ -109,7 +124,11 @@ namespace Pathfinding {
 			/* Set up default values, to not throw null reference errors */
 			userConnections = new UserConnection[0];
 			
+#if false
+			graphs = new NavGraph[1] { CreateGraph (typeof(LinkGraph)) };
+#else
 			graphs = new NavGraph[0];
+#endif
 			/* End default values */
 			
 			if (cacheStartup && data_cachedStartup != null) {
@@ -125,8 +144,16 @@ namespace Pathfinding {
 		 */
 		public void UpdateShortcuts () {
 			navmesh = (NavMeshGraph)FindGraphOfType (typeof(NavMeshGraph));
+
+#if !ASTAR_NO_GRID_GRAPH
 			gridGraph = (GridGraph)FindGraphOfType (typeof(GridGraph));
+#endif
+
+#if !ASTAR_NO_POINT_GRAPH
 			pointGraph = (PointGraph)FindGraphOfType (typeof(PointGraph));
+#endif
+
+			recastGraph = (RecastGraph)FindGraphOfType (typeof(RecastGraph));
 		}
 		
 		public void LoadFromCache () {
@@ -175,6 +202,9 @@ namespace Pathfinding {
 			SerializeGraphsPart (sr);
 			byte[] bytes = sr.CloseSerialize();
 			checksum = sr.GetChecksum ();
+	#if ASTARDEBUG
+			Debug.Log ("Got a whole bunch of data, "+bytes.Length+" bytes");
+	#endif
 			return bytes;
 		}
 		
@@ -331,7 +361,8 @@ namespace Pathfinding {
 		 * Using reflection, the assembly is searched for types which inherit from NavGraph. */
 		public void FindGraphTypes () {
 			
-#if !ASTAR_FAST_NO_EXCEPTIONS
+#if !ASTAR_FAST_NO_EXCEPTIONS && !NETFX_CORE
+
 			System.Reflection.Assembly asm = System.Reflection.Assembly.GetAssembly (typeof(AstarPath));
 			
 			System.Type[] types = asm.GetTypes ();
@@ -343,19 +374,23 @@ namespace Pathfinding {
 				System.Type baseType = type.BaseType;
 				while (baseType != null) {
 					
-					if (baseType == typeof(NavGraph)) {
+					if (System.Type.Equals ( baseType, typeof(NavGraph) )) {
 						
 						graphList.Add (type);
 						
 						break;
 					}
-					
+
+					// I hate Windows Store, this is just "baseType = baseType.BaseType;"
 					baseType = baseType.BaseType;
 				}
 			}
 			
 			graphTypes = graphList.ToArray ();
-			
+
+#if ASTARDEBUG
+			Debug.Log ("Found "+graphTypes.Length+" graph types");
+#endif	
 #else		
 			graphTypes = DefaultGraphTypes;
 #endif
@@ -424,7 +459,7 @@ namespace Pathfinding {
 			
 			for (int i=0;i<graphTypes.Length;i++) {
 				
-				if (graphTypes[i] == type) {
+				if (System.Type.Equals (graphTypes[i], type)) {
 					graph = CreateGraph (graphTypes[i]);
 				}
 			}
@@ -571,7 +606,7 @@ namespace Pathfinding {
 			
 			if ( graphs != null ) {
 				for (int i=0;i<graphs.Length;i++) {
-					if (graphs[i] != null && graphs[i].GetType () == type) {
+					if (graphs[i] != null && System.Type.Equals (graphs[i].GetType (), type)) {
 						return graphs[i];
 					}
 				}
@@ -587,7 +622,7 @@ namespace Pathfinding {
 		public IEnumerable FindGraphsOfType (System.Type type) {
 			if (graphs == null) { yield break; }
 			for (int i=0;i<graphs.Length;i++) {
-				if (graphs[i] != null && graphs[i].GetType () == type) {
+				if (graphs[i] != null && System.Type.Equals (graphs[i].GetType (), type)) {
 					yield return graphs[i];
 				}
 			}

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Threading;
 
 namespace Pathfinding.Threading {
+#if FALSE
 	public class Parallel {
 		
 		Parallel Instance;
@@ -174,4 +175,5 @@ namespace Pathfinding.Threading {
 			}
 		}
 	}
+#endif
 }

@@ -59,6 +59,10 @@ namespace Pathfinding
 		 * For better memory management the returned list should be pooled, see Pathfinding.Util.ListPool
 		 */
 		public static List<GraphNode> GetReachableNodes (GraphNode seed, int tagMask = -1) {
+#if ASTAR_PROFILE
+			System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
+			watch.Start ();
+#endif
 			Stack<GraphNode> stack = Pathfinding.Util.StackPool<GraphNode>.Claim ();
 			List<GraphNode> list = Pathfinding.Util.ListPool<GraphNode>.Claim ();
 			
@@ -90,12 +94,16 @@ namespace Pathfinding
 			
 			Pathfinding.Util.StackPool<GraphNode>.Release (stack);
 			
+#if ASTAR_PROFILE
+			watch.Stop ();
+			Debug.Log ((1000*watch.Elapsed.TotalSeconds).ToString("0.0 ms"));
+#endif
 			return list;
 		}
 		
 		/** Returns all nodes within a given node-distance from the seed node.
-		 * This function performs a BFS (breadth-first-search) or flood fill of the graph and returns all nodes which can be reached from
-		 * the seed node. In almost all cases this will be identical to returning all nodes which have the same area as the seed node.
+		 * This function performs a BFS (breadth-first-search) or flood fill of the graph and returns all nodes within a specified node distance which can be reached from
+		 * the seed node. In almost all cases when \a depth is large enough this will be identical to returning all nodes which have the same area as the seed node.
 		 * In the editor areas are displayed as different colors of the nodes.
 		 * The only case where it will not be so is when there is a one way path from some part of the area to the seed node
 		 * but no path from the seed node to that part of the graph.
@@ -111,10 +119,14 @@ namespace Pathfinding
 		 * \param depth The maximum node-distance from the seed node.
 		 * \param tagMask Optional mask for tags. This is a bitmask.
 		 *
-		 * \returns A List<Node> containing all nodes reachable from the seed node.
+		 * \returns A List<Node> containing all nodes reachable within a specified node distance from the seed node.
 		 * For better memory management the returned list should be pooled, see Pathfinding.Util.ListPool
 		 */
 		public static List<GraphNode> BFS (GraphNode seed, int depth, int tagMask = -1) {
+			#if ASTAR_PROFILE
+			System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
+			watch.Start ();
+			#endif
 			List<GraphNode> que = Pathfinding.Util.ListPool<GraphNode>.Claim ();
 			List<GraphNode> list = Pathfinding.Util.ListPool<GraphNode>.Claim ();
 
@@ -154,6 +166,10 @@ namespace Pathfinding
 			
 			Pathfinding.Util.ListPool<GraphNode>.Release (que);
 			
+			#if ASTAR_PROFILE
+			watch.Stop ();
+			Debug.Log ((1000*watch.Elapsed.TotalSeconds).ToString("0.0 ms"));
+			#endif
 			return list;
 		}
 
@@ -350,7 +366,9 @@ namespace Pathfinding
 						float a = System.Math.Abs(Polygon.TriangleArea(tnode.GetVertex(0), tnode.GetVertex(1), tnode.GetVertex(2)));
 						tot += a;
 						accs.Add (tot);
-					} else {
+					}
+#if !ASTAR_NO_GRID_GRAPH
+					 else {
 						GridNode gnode = nodes[i] as GridNode;
 						
 						if (gnode != null) {
@@ -362,6 +380,7 @@ namespace Pathfinding
 							accs.Add(tot);
 						}
 					}
+#endif
 				}
 				
 				for (int i=0;i<count;i++) {
@@ -406,6 +425,7 @@ namespace Pathfinding
 							
 							p = ((Vector3)(node.GetVertex(1)-node.GetVertex(0)))*v1 + ((Vector3)(node.GetVertex(2)-node.GetVertex(0)))*v2 + (Vector3)node.GetVertex(0);
 						} else {
+#if !ASTAR_NO_GRID_GRAPH
 							GridNode gnode = nodes[v] as GridNode;
 							
 							if (gnode != null) {
@@ -414,7 +434,9 @@ namespace Pathfinding
 								float v1 = (float)rnd.NextDouble();
 								float v2 = (float)rnd.NextDouble();
 								p = (Vector3)gnode.position + new Vector3(v1 - 0.5f, 0, v2 - 0.5f) * gg.nodeSize;
-							} else {
+							} else
+#endif 
+							{
 								//Point nodes have no area, so we break directly instead
 								pts.Add ((Vector3)nodes[v].position);
 								break;

@@ -554,7 +554,12 @@ namespace Pathfinding {
 		public static bool Left (Vector3 a, Vector3 b, Vector3 p) {
 			return (b.x - a.x) * (p.z - a.z) - (p.x - a.x) * (b.z - a.z) <= 0;
 		}
-		
+
+		/** Returns if \a p lies on the left side of the line \a a - \a b. Also returns true if the points are colinear */
+		public static bool Left (Vector2 a, Vector2 b, Vector2 p) {
+			return (b.x - a.x) * (p.y - a.y) - (p.x - a.x) * (b.y - a.y) <= 0;
+		}
+
 		/** Returns if \a p lies on the left side of the line \a a - \a b. Uses XZ space. Also returns true if the points are colinear */
 		public static bool Left (Int3 a, Int3 b, Int3 c) {
 			return (long)(b.x - a.x) * (long)(c.z - a.z) - (long)(c.x - a.x) * (long)(b.z - a.z) <= 0;
@@ -819,7 +824,7 @@ namespace Pathfinding {
 			//Debug.DrawRay (start1,dir1*5,Color.green);
 			return true;
 		}
-		
+
 		/** Returns the intersection factor for line 1 with ray 2.
 		 * The intersection factors is a factor distance along the line \a start - \a end where the other line intersects it.\n
 		 * \code intersectionPoint = start1 + factor * (end1-start1) \endcode
@@ -995,6 +1000,11 @@ namespace Pathfinding {
 				List<Vector3> hull = hullCache;
 				hull.Clear ();
 				
+	#if ASTARDEBUG
+				for (int i=0;i<points.Length;i++) {
+					Debug.DrawLine (points[i],points[(i+1)%points.Length],Color.blue);
+				}
+	#endif
 				
 				int pointOnHull = 0;
 				for (int i=1;i<points.Length;i++) if (points[i].x < points[pointOnHull].x) pointOnHull = i;

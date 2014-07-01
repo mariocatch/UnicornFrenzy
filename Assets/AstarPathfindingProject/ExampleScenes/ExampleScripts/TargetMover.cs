@@ -9,6 +9,8 @@ namespace Pathfinding {
 		public LayerMask mask;
 		
 		public Transform target;
+		//public RichAI ai;
+		RichAI[] ais;
 		AIPath[] ais2;
 
 		/** Determines if the target position should be updated every frame or only on double-click */
@@ -19,6 +21,7 @@ namespace Pathfinding {
 		public void Start () {
 			//Cache the Main Camera
 			cam = Camera.main;
+			ais = FindObjectsOfType(typeof(RichAI)) as RichAI[];
 			ais2 = FindObjectsOfType(typeof(AIPath)) as AIPath[];
 		}
 		
@@ -43,6 +46,11 @@ namespace Pathfinding {
 			RaycastHit hit;
 			if (Physics.Raycast	(cam.ScreenPointToRay (Input.mousePosition), out hit, Mathf.Infinity, mask) && hit.point != target.position) {
 				target.position = hit.point;
+				if (ais != null && onlyOnDoubleClick) {
+					for (int i=0;i<ais.Length;i++) {
+						if (ais[i] != null) ais[i].UpdatePath();
+					}
+				}
 				
 				if (ais2 != null && onlyOnDoubleClick) {
 					for (int i=0;i<ais2.Length;i++) {

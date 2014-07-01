@@ -71,6 +71,9 @@ namespace Pathfinding {
 		[System.Diagnostics.Conditional ("ProfileAstar")]
 		public static void StartProfile(string tag)
 		{
+	#if UNITY_PRO_PROFILER
+			Profiler.BeginSample (tag);
+	#else
 			//Console.WriteLine ("Profile Start - " + tag);
 			ProfilePoint point;
 			
@@ -83,11 +86,13 @@ namespace Pathfinding {
 			point.watch.Start();
 			//point.lastRecorded = DateTime.UtcNow;
 			//Debug.Log ("Starting " + tag);
+	#endif
 		}
 		
 		[System.Diagnostics.Conditional ("ProfileAstar")]
 		public static void EndProfile(string tag)
 		{
+	#if !UNITY_PRO_PROFILER
 			if (!profiles.ContainsKey(tag))
 			{
 				Debug.LogError("Can only end profiling for a tag which has already been started (tag was " + tag + ")");
@@ -102,6 +107,9 @@ namespace Pathfinding {
 			point.totalBytes += System.GC.GetTotalMemory (false) - point.tmpBytes;
 			//profiles[tag] = point;
 			//Debug.Log ("Ending " + tag);
+	#else
+			EndProfile ();
+	#endif
 		}
 		
 		[System.Diagnostics.Conditional ("ProfileAstar")]

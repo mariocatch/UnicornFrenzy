@@ -18,11 +18,12 @@ namespace Pathfinding
 		 * This function should not be used directly. Instead use the Path.Claim and Path.Release functions.
 		 */
 		public static void Recycle (T path) {
+#if !ASTAR_NO_POOLING
 			lock (pool) {
 #if UNITY_EDITOR
 				// I am trusting the developer that it at least 1 time tests the game in the editor
 				// Increases performance in builds
-				if (path.GetType () != typeof(T)) {
+				if (!System.Type.Equals (path.GetType (), typeof(T))) {
 					throw new ArgumentException ("Cannot recycle path of type '"+path.GetType().Name+"' in a pool for path type '"+typeof(T).Name+"'.\n" +
 						"Most likely the path type does not have support for recycling. Please do not call Recycle () on that path");
 				}
@@ -32,6 +33,7 @@ namespace Pathfinding
 				path.OnEnterPool ();
 				pool.Push (path);
 			}
+#endif
 		}
 		
 		/** Warms up path, node list and vector list pools.
@@ -56,6 +58,11 @@ namespace Pathfinding
 		}
 		
 		public static T GetPath () {
+#if ASTAR_NO_POOLING
+			T result = new T ();
+			result.Reset();
+			return result;
+#else
 			lock (pool) {
 				T result;
 				if (pool.Count > 0) {
@@ -70,6 +77,7 @@ namespace Pathfinding
 				return result;
 			}
 			
+#endif
 		}
 	}
 }
