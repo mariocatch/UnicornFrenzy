@@ -33,7 +33,8 @@ public class Player : MonoBehaviour
 		//Resource variables
 		public int Health;
 		[HideInInspector]
-		public int ActionPoints;
+		public int
+				ActionPoints;
 
 		//Resource maximums
 		public int MaxHealth;
@@ -41,15 +42,20 @@ public class Player : MonoBehaviour
 
 		//Navigation variables
 		[HideInInspector]
-		public List<GameObject> RenderedGrid = new List<GameObject> ();
+		public List<GameObject>
+				RenderedGrid = new List<GameObject> ();
 		[HideInInspector]
-		public List<GraphNode> MoveableNodes;
+		public List<GraphNode>
+				MoveableNodes;
 		[HideInInspector]
-		public Material SquareMat;
+		public Material
+				SquareMat;
 		[HideInInspector]
-		public Vector3 PathOffset;
+		public Vector3
+				PathOffset;
 		[HideInInspector]
-		public List<GraphNode> Nodes = new List<GraphNode> ();
+		public List<GraphNode>
+				Nodes = new List<GraphNode> ();
 		[HideInInspector]
 		public Seeker
 				mSeeker;
@@ -93,6 +99,9 @@ public class Player : MonoBehaviour
 
 		//Combat variables
 		[HideInInspector]
+		public bool
+				InCover;
+		[HideInInspector]
 		public Enemy
 				mEnemyTarget;
 		[HideInInspector]
@@ -135,7 +144,7 @@ public class Player : MonoBehaviour
 		public virtual void Update ()
 		{
 				if (Health <= 0) {
-					Death ();
+						Death ();
 				}
 
 				if (ActionPoints > MaxActionPoints) {
@@ -228,14 +237,14 @@ public class Player : MonoBehaviour
 					
 												if (playerPlane.Raycast (ray, out hitdist)) {
 														Vector3 targetPoint = ray.GetPoint (hitdist);
-														GraphNode targetNode = mAstarPath.astarData.gridGraph.GetNearest(targetPoint).node;
+														GraphNode targetNode = mAstarPath.astarData.gridGraph.GetNearest (targetPoint).node;
 														if (targetNode != null) { 
-														GraphNode match = MoveableNodes.FirstOrDefault (x => x.position == targetNode.position);
-															if (match != null){
-																MoveCharacter (targetPoint);
-																ClearRender();
-																MoveAble = false;
-															}
+																GraphNode match = MoveableNodes.FirstOrDefault (x => x.position == targetNode.position);
+																if (match != null) {
+																		MoveCharacter (targetPoint);
+																		ClearRender ();
+																		MoveAble = false;
+																}
 														}
 												}
 										}
@@ -290,10 +299,11 @@ public class Player : MonoBehaviour
 				}
 		}
 
-		public void Death(){
+		public void Death ()
+		{
 
-		mGameController.Players.Remove (this);
-		Destroy (gameObject);
+				mGameController.Players.Remove (this);
+				Destroy (gameObject);
 		
 		}
 
@@ -303,28 +313,28 @@ public class Player : MonoBehaviour
 				//Activates player specific Gui elements during the respective players turn
 				if (TurnActive) {
 
-						GUI.Label (new Rect (140, 15, 80, 25), Health.ToString());
+						GUI.Label (new Rect (140, 15, 80, 25), Health.ToString ());
 						GUI.Label (new Rect (225, 15, 80, 25), PlayerName);
-						GUI.Label (new Rect (310, 15, 80, 25), ActionPoints.ToString());
+						GUI.Label (new Rect (310, 15, 80, 25), ActionPoints.ToString ());
 
 						if (GUI.Button (new Rect (90, 45, 80, 20), "Move") && MoveAble && !mSelectLocation && !mFTargetSelect && !mETargetSelect && !MovePhase) {
 
 								MovePhase = true;
-								StartCoroutine(Constant());
+								StartCoroutine (Constant ());
 				
-				}
+						}
 
 						if (GUI.Button (new Rect (180, 45, 80, 20), "Ability1") && AttackAble && !MovePhase && FinishedMoving) {
 				
-							if (ActionPoints >= Ability1.ApCost){	
-							AbilityHandler (Ability1);
-							}
+								if (ActionPoints >= Ability1.ApCost) {	
+										AbilityHandler (Ability1);
+								}
 	
 						}
 
 						if (GUI.Button (new Rect (270, 45, 80, 20), "Ability2") && AttackAble && !MovePhase && FinishedMoving) {
-								if (ActionPoints >= Ability2.ApCost){
-								AbilityHandler (Ability2);
+								if (ActionPoints >= Ability2.ApCost) {
+										AbilityHandler (Ability2);
 								}
 				
 						}
@@ -394,111 +404,115 @@ public class Player : MonoBehaviour
 
 		}
 
-		public void OnConstantPathComplete(Path p){
+		public void OnConstantPathComplete (Path p)
+		{
 
-		ConstantPath constPath = p as ConstantPath;
-		List<GraphNode> nodes = constPath.allNodes;
-		MoveableNodes = nodes;
+				ConstantPath constPath = p as ConstantPath;
+				List<GraphNode> nodes = constPath.allNodes;
+				MoveableNodes = nodes;
 		
-		Mesh mesh = new Mesh ();
+				Mesh mesh = new Mesh ();
 		
-		List<Vector3> verts = new List<Vector3>();
+				List<Vector3> verts = new List<Vector3> ();
 		
-		bool drawRaysInstead = false;
+				bool drawRaysInstead = false;
 		
-		List<Vector3> pts = Pathfinding.PathUtilities.GetPointsOnNodes (nodes, 20, 0);
-		Vector3 avg = Vector3.zero;
-		for (int i=0;i<pts.Count;i++) {
-			Debug.DrawRay (pts[i], Vector3.up*5, Color.red, 3);
-			avg += pts[i];
-		}
+				List<Vector3> pts = Pathfinding.PathUtilities.GetPointsOnNodes (nodes, 20, 0);
+				Vector3 avg = Vector3.zero;
+				for (int i=0; i<pts.Count; i++) {
+						Debug.DrawRay (pts [i], Vector3.up * 5, Color.red, 3);
+						avg += pts [i];
+				}
 		
-		if (pts.Count > 0) avg /= pts.Count;
+				if (pts.Count > 0)
+						avg /= pts.Count;
 		
-		for (int i=0;i<pts.Count;i++) {
-			pts[i] -= avg;
-		}
+				for (int i=0; i<pts.Count; i++) {
+						pts [i] -= avg;
+				}
 		
-		Pathfinding.PathUtilities.GetPointsAroundPoint (transform.position, AstarPath.active.astarData.graphs[0] as IRaycastableGraph, pts, 0, 1);
+				Pathfinding.PathUtilities.GetPointsAroundPoint (transform.position, AstarPath.active.astarData.graphs [0] as IRaycastableGraph, pts, 0, 1);
 		
-		for (int i=0;i<pts.Count;i++) {
-			Debug.DrawRay (pts[i], Vector3.up*5, Color.blue, 3);
-		}
+				for (int i=0; i<pts.Count; i++) {
+						Debug.DrawRay (pts [i], Vector3.up * 5, Color.blue, 3);
+				}
 		
-		//This will loop through the nodes from furthest away to nearest, not really necessary... but why not :D
-		//Note that the reverse does not, as common sense would suggest, loop through from the closest to the furthest away
-		//since is might contain duplicates and only the node duplicate placed at the highest index is guarenteed to be ordered correctly.
-		for (int i=nodes.Count-1;i>=0;i--) {
+				//This will loop through the nodes from furthest away to nearest, not really necessary... but why not :D
+				//Note that the reverse does not, as common sense would suggest, loop through from the closest to the furthest away
+				//since is might contain duplicates and only the node duplicate placed at the highest index is guarenteed to be ordered correctly.
+				for (int i=nodes.Count-1; i>=0; i--) {
 			
-			Vector3 pos = (Vector3)nodes[i].position+PathOffset;
-			if (verts.Count	== 65000 && !drawRaysInstead) {
-				Debug.LogError ("Too many nodes, rendering a mesh would throw 65K vertex error. Using Debug.DrawRay instead for the rest of the nodes");
-				drawRaysInstead = true;
-			}
+						Vector3 pos = (Vector3)nodes [i].position + PathOffset;
+						if (verts.Count == 65000 && !drawRaysInstead) {
+								Debug.LogError ("Too many nodes, rendering a mesh would throw 65K vertex error. Using Debug.DrawRay instead for the rest of the nodes");
+								drawRaysInstead = true;
+						}
 			
-			if (drawRaysInstead) {
-				Debug.DrawRay (pos,Vector3.up,Color.blue);
-				continue;
-			}
+						if (drawRaysInstead) {
+								Debug.DrawRay (pos, Vector3.up, Color.blue);
+								continue;
+						}
 			
-			//Add vertices in a square
+						//Add vertices in a square
 			
-			GridGraph gg = AstarData.GetGraph (nodes[i]) as GridGraph;
-			float scale = 1F;
+						GridGraph gg = AstarData.GetGraph (nodes [i]) as GridGraph;
+						float scale = 1F;
 			
-			if (gg != null) scale = gg.nodeSize;
+						if (gg != null)
+								scale = gg.nodeSize;
 			
-			verts.Add (pos+new Vector3 (-0.5F,0,-0.5F)*scale);
-			verts.Add (pos+new Vector3 (0.5F,0,-0.5F)*scale);
-			verts.Add (pos+new Vector3 (-0.5F,0,0.5F)*scale);
-			verts.Add (pos+new Vector3 (0.5F,0,0.5F)*scale);
-		}
+						verts.Add (pos + new Vector3 (-0.5F, 0, -0.5F) * scale);
+						verts.Add (pos + new Vector3 (0.5F, 0, -0.5F) * scale);
+						verts.Add (pos + new Vector3 (-0.5F, 0, 0.5F) * scale);
+						verts.Add (pos + new Vector3 (0.5F, 0, 0.5F) * scale);
+				}
 		
-		//Build triangles for the squares
-		Vector3[] vs = verts.ToArray ();
-		int[] tris = new int[(3*vs.Length)/2];
-		for (int i=0, j=0;i<vs.Length;j+=6, i+=4) {
-			tris[j+0] = i;
-			tris[j+1] = i+1;
-			tris[j+2] = i+2;
+				//Build triangles for the squares
+				Vector3[] vs = verts.ToArray ();
+				int[] tris = new int[(3 * vs.Length) / 2];
+				for (int i=0, j=0; i<vs.Length; j+=6, i+=4) {
+						tris [j + 0] = i;
+						tris [j + 1] = i + 1;
+						tris [j + 2] = i + 2;
 			
-			tris[j+3] = i+1;
-			tris[j+4] = i+3;
-			tris[j+5] = i+2;
-		}
+						tris [j + 3] = i + 1;
+						tris [j + 4] = i + 3;
+						tris [j + 5] = i + 2;
+				}
 		
-		Vector2[] uv = new Vector2[vs.Length];
-		//Set up some basic UV
-		for (int i=0;i<uv.Length;i+=4) {
-			uv[i] = new Vector2(0,0);
-			uv[i+1] = new Vector2(1,0);
-			uv[i+2] = new Vector2(0,1);
-			uv[i+3] = new Vector2(1,1);
-		}
+				Vector2[] uv = new Vector2[vs.Length];
+				//Set up some basic UV
+				for (int i=0; i<uv.Length; i+=4) {
+						uv [i] = new Vector2 (0, 0);
+						uv [i + 1] = new Vector2 (1, 0);
+						uv [i + 2] = new Vector2 (0, 1);
+						uv [i + 3] = new Vector2 (1, 1);
+				}
 		
-		mesh.vertices = vs;
-		mesh.triangles = tris;
-		mesh.uv = uv;
-		mesh.RecalculateNormals ();
+				mesh.vertices = vs;
+				mesh.triangles = tris;
+				mesh.uv = uv;
+				mesh.RecalculateNormals ();
 		
-		GameObject go = new GameObject("Mesh",typeof(MeshRenderer),typeof(MeshFilter));
-		MeshFilter fi = go.GetComponent<MeshFilter>();
-		fi.mesh = mesh;
-		MeshRenderer re = go.GetComponent<MeshRenderer>();
-		re.material = SquareMat;
+				GameObject go = new GameObject ("Mesh", typeof(MeshRenderer), typeof(MeshFilter));
+				MeshFilter fi = go.GetComponent<MeshFilter> ();
+				fi.mesh = mesh;
+				MeshRenderer re = go.GetComponent<MeshRenderer> ();
+				re.material = SquareMat;
 		
-		RenderedGrid.Add (go);
+				RenderedGrid.Add (go);
 
 		}
 
-		public void ClearRender(){
+		public void ClearRender ()
+		{
 
-		for (int i=0; i<RenderedGrid.Count; i++) {
+				for (int i=0; i<RenderedGrid.Count; i++) {
 
-			Destroy (RenderedGrid[i]);
+						Destroy (RenderedGrid [i]);
 
 				}
-			RenderedGrid.Clear ();
+				RenderedGrid.Clear ();
 		}
 	
 		public void EndTurn ()
@@ -569,11 +583,12 @@ public class Player : MonoBehaviour
 				}
 		}
 
-		public IEnumerator Constant () {
-			ConstantPath constPath = ConstantPath.Construct (transform.position, (Speed / 2) * 3000, OnConstantPathComplete);
-			AstarPath.StartPath (constPath);
-			yield return constPath.WaitForPath();
-			Debug.Log (constPath.pathID + " " + constPath.allNodes.Count);
+		public IEnumerator Constant ()
+		{
+				ConstantPath constPath = ConstantPath.Construct (transform.position, (Speed / 2) * 3000, OnConstantPathComplete);
+				AstarPath.StartPath (constPath);
+				yield return constPath.WaitForPath ();
+				Debug.Log (constPath.pathID + " " + constPath.allNodes.Count);
 		}
 	
 	

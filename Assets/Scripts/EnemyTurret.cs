@@ -67,11 +67,18 @@ public class EnemyTurret : Enemy
 
 		public void SelectNewTarget ()
 		{
+				RaycastHit hit;
 				for (int i = 0; i < mGameController.Players.Count; i++) {
 			
 						if (Vector3.Distance (transform.position, mGameController.Players [i].transform.position) <= AggroRange) {
 								if (!Physics.Linecast (transform.position, mGameController.Players [i].transform.position, CheckWalls)) {
 										Targets.Add (mGameController.Players [i]);
+									} else if (Physics.Linecast (transform.position, mGameController.Players [i].transform.position, out hit,CheckWalls)){
+										if (hit.collider.tag == "Cover"){
+
+											Targets.Add (mGameController.Players[i]);
+
+											}
 								}
 						}
 				}
@@ -87,12 +94,19 @@ public class EnemyTurret : Enemy
 						Turret.transform.rotation = Quaternion.Slerp (Turret.transform.rotation, rotate, Time.deltaTime * 5f);
 						Target.gameObject.layer = 10;
 						RaycastHit hit;
-						Debug.DrawRay (Turret.transform.position, Turret.transform.forward, Color.blue);
 						if (Physics.Raycast (Turret.transform.position, Turret.transform.forward, out hit, Mathf.Infinity, layerMask.value)) {
 
 								if (hit.collider.gameObject.GetComponent<Player> () == Target) {
-										print ("Hit the target!");
+									if (Target.InCover){
+										if (Physics.Linecast (transform.position, Target.transform.position, CheckWalls)) {
+							print ("Using Cover Attack!");
+										CoverAttack(Target);
+										} else {
+											BasicAttack (Target);
+										}
+									}else {
 										BasicAttack (Target);
+										}
 										Target.gameObject.layer = 0;
 										mAttacking = false;
 								}
@@ -117,6 +131,18 @@ public class EnemyTurret : Enemy
 						print ("Attacked for " + DamageDealt);
 						EndTurn ();
 				}
+		}
+
+		public void CoverAttack (Player target)
+		{
+		
+			if (Random.Range (4, 8) < (HitChance - HitReducer)) {
+				int DamageDealt = (BasicAttackDamage + Random.Range (0, DamageBonus)) - DamageReducer;
+				target.Health -= DamageDealt;
+				Instantiate (BloodParticles, target.transform.position, target.transform.rotation);
+				print ("Attacked for " + DamageDealt);
+				EndTurn ();
+			}
 		}
 
 		public override void EndTurn ()
