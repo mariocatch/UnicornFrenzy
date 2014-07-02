@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class EnemyTurret : Enemy
 {
@@ -8,6 +9,8 @@ public class EnemyTurret : Enemy
 		private bool mAttacking;
 		public GameObject Turret;
 		public LayerMask layerMask;
+		public LayerMask CheckWalls;
+		private List<Player> Targets = new List<Player>();
 
 		public override void Start ()
 		{
@@ -20,49 +23,38 @@ public class EnemyTurret : Enemy
 		
 				if (Target != null) {
 			
-						if (Vector3.Distance (transform.position, Target.transform.position) <= AttackRange) {
-								TurnTime = Time.time + 2;
-								mAttacking = true;
+				if (Vector3.Distance (transform.position, Target.transform.position) <= AttackRange && !Physics.Linecast (transform.position, Target.transform.position, CheckWalls)) {
+										TurnTime = Time.time + 2;
+										mAttacking = true;
 						} else {
-							
-								for (int i = 0; i < mGameController.Players.Count; i++) {
-					
-					
-					
-										if (Vector3.Distance (transform.position, mGameController.Players [i].transform.position) <= AggroRange) {
-						
-												Target = mGameController.Players [i];
-												if (Vector3.Distance (transform.position, Target.transform.position) <= AttackRange) {
-														TurnTime = Time.time + 3;
-														mAttacking = true;
-														break;
-												}
+								
+								SelectNewTarget ();
+								if (Targets.Count != 0) {
+										Target = Targets [Random.Range (0, Targets.Count)];
+										if (Vector3.Distance (transform.position, Target.transform.position) <= AttackRange) {
+												TurnTime = Time.time + 3;
+												mAttacking = true;
 										}
-					
 								}
+										
+					
+								
 						}
 			
 				} else {
 			
-						for (int i = 0; i < mGameController.Players.Count; i++) {
-				
-				
-				
-								if (Vector3.Distance (transform.position, mGameController.Players [i].transform.position) <= AggroRange) {
-					
-										Target = mGameController.Players [i];
-										if (Vector3.Distance (transform.position, Target.transform.position) <= AttackRange) {
-												TurnTime = Time.time + 3;
-												mAttacking = true;
-												break;
-										}
+						SelectNewTarget ();
+						if (Targets.Count != 0) {
+								Target = Targets [Random.Range (0, Targets.Count)];
+								if (Vector3.Distance (transform.position, Target.transform.position) <= AttackRange) {
+										TurnTime = Time.time + 3;
+										mAttacking = true;
 								}
-				
 						}
 			
 			
 				}
-				if(!mAttacking) {
+				if (!mAttacking) {
 						EndTurn ();
 				}
 		}
@@ -73,30 +65,43 @@ public class EnemyTurret : Enemy
 				Destroy (gameObject);
 		}
 
+		public void SelectNewTarget ()
+		{
+				for (int i = 0; i < mGameController.Players.Count; i++) {
+			
+						if (Vector3.Distance (transform.position, mGameController.Players [i].transform.position) <= AggroRange) {
+								if (!Physics.Linecast (transform.position, mGameController.Players [i].transform.position, CheckWalls)) {
+										Targets.Add (mGameController.Players [i]);
+								}
+						}
+				}
+
+		}
+
 		public void Update ()
 		{
 
 				if (mAttacking) {
 
-						  Quaternion rotate = Quaternion.LookRotation(Target.transform.position - Turret.transform.position);
-						 Turret.transform.rotation = Quaternion.Slerp (Turret.transform.rotation, rotate, Time.deltaTime * 5f);
+						Quaternion rotate = Quaternion.LookRotation (Target.transform.position - Turret.transform.position);
+						Turret.transform.rotation = Quaternion.Slerp (Turret.transform.rotation, rotate, Time.deltaTime * 5f);
 						Target.gameObject.layer = 10;
 						RaycastHit hit;
 						Debug.DrawRay (Turret.transform.position, Turret.transform.forward, Color.blue);
-						if (Physics.Raycast (Turret.transform.position, Turret.transform.forward, out hit, Mathf.Infinity, layerMask.value) ) {
+						if (Physics.Raycast (Turret.transform.position, Turret.transform.forward, out hit, Mathf.Infinity, layerMask.value)) {
 
-							if (hit.collider.gameObject.GetComponent<Player>() == Target){
-								print ("Hit the target!");
-								BasicAttack (Target);
-								Target.gameObject.layer = 0;
-								mAttacking = false;
+								if (hit.collider.gameObject.GetComponent<Player> () == Target) {
+										print ("Hit the target!");
+										BasicAttack (Target);
+										Target.gameObject.layer = 0;
+										mAttacking = false;
 								}
 						}
 				}
 
-			if (!mAttacking) {
+				if (!mAttacking) {
 
-			EndTurn ();
+						EndTurn ();
 
 				}
 
@@ -113,11 +118,13 @@ public class EnemyTurret : Enemy
 						EndTurn ();
 				}
 		}
+
 		public override void EndTurn ()
-	{
-		if (Time.time > TurnTime) {
+		{
+				if (Time.time > TurnTime) {
+						Targets.Clear ();
 						mAttacking = false;
 						base.EndTurn ();
 				}
-	}
+		}
 }
