@@ -10,6 +10,7 @@ public class EnemyTurret : Enemy
 		public GameObject Turret;
 		public LayerMask layerMask;
 		public LayerMask CheckWalls;
+		public LayerMask CheckCover;
 		private List<Player> Targets = new List<Player>();
 
 		public override void Start ()
@@ -73,14 +74,8 @@ public class EnemyTurret : Enemy
 						if (Vector3.Distance (transform.position, mGameController.Players [i].transform.position) <= AggroRange) {
 								if (!Physics.Linecast (transform.position, mGameController.Players [i].transform.position, CheckWalls)) {
 										Targets.Add (mGameController.Players [i]);
-									} else if (Physics.Linecast (transform.position, mGameController.Players [i].transform.position, out hit,CheckWalls)){
-										if (hit.collider.tag == "Cover"){
-
-											Targets.Add (mGameController.Players[i]);
-
-											}
+									} 
 								}
-						}
 				}
 
 		}
@@ -98,7 +93,7 @@ public class EnemyTurret : Enemy
 
 								if (hit.collider.gameObject.GetComponent<Player> () == Target) {
 									if (Target.InCover){
-										if (Physics.Linecast (transform.position, Target.transform.position, CheckWalls)) {
+								if (Physics.Linecast (transform.position, Target.transform.position, CheckCover)) {
 							print ("Using Cover Attack!");
 										CoverAttack(Target);
 										} else {

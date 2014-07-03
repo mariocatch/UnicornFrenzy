@@ -29,6 +29,8 @@ public class Player : MonoBehaviour
 		public int
 				SecondaryStat;
 		public int Range;
+		[HideInInspector]
+		public int MoveSpeed;
 
 		//Resource variables
 		public int Health;
@@ -37,8 +39,11 @@ public class Player : MonoBehaviour
 				ActionPoints;
 
 		//Resource maximums
+		[HideInInspector]
+		public int mMaxMove;
 		public int MaxHealth;
-		public int MaxActionPoints = 6;
+		[HideInInspector]
+		public int MaxActionPoints;
 
 		//Navigation variables
 		[HideInInspector]
@@ -65,7 +70,8 @@ public class Player : MonoBehaviour
 		[HideInInspector]
 		public float
 				mPathLength;
-		public float mMaxPathLength = 25;
+		 [HideInInspector]
+		public float mMaxPathLength;
 		[HideInInspector]
 		public AstarPath
 				mAstarPath;
@@ -132,7 +138,9 @@ public class Player : MonoBehaviour
 
 		public virtual void Start ()
 		{
-
+				mMaxMove = 20;
+				MaxActionPoints = 6;
+				mMaxPathLength = 35;
 				mSeeker = gameObject.GetComponent<Seeker> ();
 				mAstarPath = GameObject.FindGameObjectWithTag ("PathGen").GetComponent<AstarPath> ();
 				mGameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameController> ();
@@ -204,7 +212,7 @@ public class Player : MonoBehaviour
 												mETargetSelect = false;
 												mTargetAbility = null;
 										}
-								}
+								}  
 						}
 
 						if (Input.GetMouseButtonDown (0) && GUIUtility.hotControl == 0 && mFTargetSelect) {
@@ -394,6 +402,18 @@ public class Player : MonoBehaviour
 	
 		public void StartTurn ()
 		{
+				MoveSpeed = mMaxMove;
+				
+				for (int i = 0; i < mGameController.Enemies.Count; i++) {
+					
+				if (Vector3.Distance(mGameController.Enemies[i].transform.position, transform.position) < 100){
+				
+				MoveSpeed = Speed;
+				break;
+				}
+
+				}
+				
 				mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = true;
 				TurnActive = true;
 				MoveAble = true;
@@ -528,7 +548,7 @@ public class Player : MonoBehaviour
 				AttackAble = false;
 				mFTargetSelect = false;
 				mETargetSelect = false;
-				print ("Ending turn!");
+				mGameController.EndPlayerTurn (this);
 		}
 	
 		public void MoveCharacter (Vector3 target)
@@ -566,12 +586,12 @@ public class Player : MonoBehaviour
 		
 				//Checks if the player is moving or not, then moves the player if they need to be
 				if (!mMoving) {
-						iTween.MoveTo (gameObject, Path.vectorPath [mCurrentWaypoint] + new Vector3 (0, 1, 0), 2f);
+						iTween.MoveTo (gameObject, Path.vectorPath [mCurrentWaypoint] + new Vector3 (0, 1, 0), 1.5f);
 						mMoving = true;
 				} else if (mMoving) {
 			
 						//If the next waypoint isn't the last one, allows for corners to be cut for smoother looking motion
-						if (Vector3.Distance (transform.position, Path.vectorPath [mCurrentWaypoint] + new Vector3 (0, 1, 0)) < 3f && mCurrentWaypoint < Path.vectorPath.Count - 1) {
+						if (Vector3.Distance (transform.position, Path.vectorPath [mCurrentWaypoint] + new Vector3 (0, 1, 0)) < 2f && mCurrentWaypoint < Path.vectorPath.Count - 1) {
 								mMoving = false;
 								mCurrentWaypoint++;
 						} else if (transform.position == Path.vectorPath [mCurrentWaypoint] + new Vector3 (0, 1, 0) && mCurrentWaypoint == Path.vectorPath.Count - 1) {
@@ -585,7 +605,7 @@ public class Player : MonoBehaviour
 
 		public IEnumerator Constant ()
 		{
-				ConstantPath constPath = ConstantPath.Construct (transform.position, (Speed / 2) * 3000, OnConstantPathComplete);
+				ConstantPath constPath = ConstantPath.Construct (transform.position, (MoveSpeed / 2) * 3000, OnConstantPathComplete);
 				AstarPath.StartPath (constPath);
 				yield return constPath.WaitForPath ();
 				Debug.Log (constPath.pathID + " " + constPath.allNodes.Count);

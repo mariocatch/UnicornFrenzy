@@ -2,12 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using Pathfinding;
+using System.Linq;
 
 public class GameController : MonoBehaviour
 {
 
 		public List <Player> Players;
 		public List <Enemy> Enemies;
+		private List<Player> ActivePlayers;
 		public GameObject NewPlane;
 		public Transform SpawnLocation;
 		public AstarPath aStarPath;
@@ -24,13 +26,18 @@ public class GameController : MonoBehaviour
 		private bool mPlayersTurn = true;
 		private bool mEnemiesTurn;
 		private bool mGameOver;
+		[HideInInspector]
+		public bool mPlayerSelected;
 		public bool mGameWon;
 
 		void Start ()
 		{
 
 				//Starts the game with the first players turn
-				Players [mCurrentPlayer].StartTurn ();
+				ActivePlayers = new List<Player> ();
+				AddPlayers();
+
+		mPlayersTurn = true;
 
 		}
 
@@ -56,7 +63,21 @@ public class GameController : MonoBehaviour
 						}
 
 				}
-				if (mPlayersTurn) {
+
+				if (Input.GetMouseButtonDown (0) && GUIUtility.hotControl == 0 && mPlayersTurn && !mPlayerSelected) {
+					Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+					RaycastHit hit;
+					if (Physics.Raycast (ray, out hit)) {
+						if (hit.collider.gameObject.tag == "Player") {	
+							Player SelectedPlayer = hit.collider.gameObject.GetComponent<Player>();
+					if (PlayerInActiveList(SelectedPlayer)){
+							mPlayerSelected = true;
+							SelectedPlayer.StartTurn ();
+					}
+						} 
+					}
+				}
+				/*if (mPlayersTurn) {
 						//Cycles through player turns
 						if (Players [mCurrentPlayer].TurnActive == false) {
 
@@ -78,7 +99,7 @@ public class GameController : MonoBehaviour
 										Players [mCurrentPlayer].StartTurn ();
 								}
 						}
-				}
+				}*/
 				if (mEnemiesTurn) {
 
 
@@ -101,14 +122,16 @@ public class GameController : MonoBehaviour
 										print ("Ending enemy phase!");
 										mCurrentEnemy = 0;
 										mEnemiesTurn = false;
+										AddPlayers();
 										mPlayersTurn = true;
-										Players [mCurrentPlayer].StartTurn ();
+										//Players [mCurrentPlayer].StartTurn ();
 								} 
 						} else {
 								mCurrentEnemy = 0;
 								mEnemiesTurn = false;
+								AddPlayers();
 								mPlayersTurn = true;
-								Players [mCurrentPlayer].StartTurn ();
+								//Players [mCurrentPlayer].StartTurn ();
 								
 						}
 				}
@@ -136,6 +159,47 @@ public class GameController : MonoBehaviour
 
 			}
 
+
+		}
+
+		public void AddPlayers(){
+
+		for (int i = 0; i < Players.Count; i++) {
+			
+			ActivePlayers.Add (Players[i]);
+			
+		}
+
+		}
+
+		public void EndPlayerTurn(Player currentPlayer){
+
+		mPlayerSelected = false;
+		ActivePlayers.Remove (currentPlayer);
+		if (ActivePlayers.Count == 0) {
+
+			mPlayersTurn = false;
+			mEnemiesTurn = true;
+			if (Enemies.Count > 0) {
+				
+				Enemies [0].StartTurn ();
+				print ("Enemy Turn!");
+				
+			}
+
+				}
+		}
+
+		public bool PlayerInActiveList(Player selectedPlayer){
+
+		if (selectedPlayer == ActivePlayers.FirstOrDefault (x => x == selectedPlayer)) {
+
+						return true;
+
+				} else {
+
+						return false;
+				}
 
 		}
 
