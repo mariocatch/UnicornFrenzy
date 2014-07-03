@@ -68,7 +68,6 @@ public class EnemyTurret : Enemy
 
 		public void SelectNewTarget ()
 		{
-				RaycastHit hit;
 				for (int i = 0; i < mGameController.Players.Count; i++) {
 			
 						if (Vector3.Distance (transform.position, mGameController.Players [i].transform.position) <= AggroRange) {

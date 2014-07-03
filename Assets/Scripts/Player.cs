@@ -129,7 +129,8 @@ public class Player : MonoBehaviour
 		public PlayerAbility
 				mTargetAbility;
 
-		//Range displays
+		//Displays
+		public GameObject SelectionIndicator;
 		public MeshRenderer ARangeDisplay;
 
 		//Abilities
@@ -138,6 +139,7 @@ public class Player : MonoBehaviour
 
 		public virtual void Start ()
 		{
+				SelectionIndicator.SetActive (false);
 				mMaxMove = 20;
 				MaxActionPoints = 6;
 				mMaxPathLength = 35;
@@ -151,6 +153,8 @@ public class Player : MonoBehaviour
 
 		public virtual void Update ()
 		{
+				
+				
 				if (Health <= 0) {
 						Death ();
 				}
@@ -252,6 +256,7 @@ public class Player : MonoBehaviour
 																		MoveCharacter (targetPoint);
 																		ClearRender ();
 																		MoveAble = false;
+																		SelectionIndicator.SetActive (true);
 																}
 														}
 												}
@@ -328,6 +333,7 @@ public class Player : MonoBehaviour
 						if (GUI.Button (new Rect (90, 45, 80, 20), "Move") && MoveAble && !mSelectLocation && !mFTargetSelect && !mETargetSelect && !MovePhase) {
 
 								MovePhase = true;
+								SelectionIndicator.SetActive (false);
 								StartCoroutine (Constant ());
 				
 						}
@@ -402,6 +408,7 @@ public class Player : MonoBehaviour
 	
 		public void StartTurn ()
 		{
+				SelectionIndicator.SetActive (true);
 				MoveSpeed = mMaxMove;
 				
 				for (int i = 0; i < mGameController.Enemies.Count; i++) {
@@ -539,6 +546,7 @@ public class Player : MonoBehaviour
 		{
 
 				//Ensures all phases are false and sets the players turn to false for the game controller
+				SelectionIndicator.SetActive (false);
 				ClearRender ();
 				mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = false;
 				TurnActive = false;

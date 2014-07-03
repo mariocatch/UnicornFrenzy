@@ -200,6 +200,7 @@
      <Compile Include="Assets\Scripts\RoomDatabase.cs" />
      <Compile Include="Assets\Scripts\RoomInfo.cs" />
      <Compile Include="Assets\Scripts\RoomPathController.cs" />
+     <Compile Include="Assets\Scripts\SelectionRotator.cs" />
      <Compile Include="Assets\Scripts\SmoothCameraFollow.cs" />
      <Compile Include="Assets\Scripts\SniperAimedShot.cs" />
      <Compile Include="Assets\Scripts\SniperChargedShot.cs" />
@@ -207,11 +208,11 @@
      <Compile Include="Assets\Scripts\StartingRoom.cs" />
      <Compile Include="Assets\Scripts\TestEnemy.cs" />
      <Compile Include="Assets\Scripts\iTween.cs" />
-     <None Include="Assets\Standard Assets\Projectors\Guidelines.txt" />
+     <None Include="Assets\Imports\Standard Assets\Projectors\Guidelines.txt" />
      <None Include="Assets\Imports\JMO Assets\WarFX\Shaders\WFX_S AlphaBlend Scroll.shader" />
      <None Include="Assets\Imports\JMO Assets\WarFX\_Effects (Mobile, Reduced Overdraw)\MuzzleFlashes\!MuzzleFlash Differences.txt" />
      <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh2.shader" />
-     <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Multiply.shader" />
+     <None Include="Assets\Imports\Standard Assets\Projectors\Sources\Shaders\Projector Multiply.shader" />
      <None Include="Assets\Imports\JMO Assets\WarFX\Shaders\WFX_S Particle AddSoft A8.shader" />
      <None Include="Assets\Imports\JMO Assets\WarFX\Shaders\WFX_S Alpha-Specular TintColor.shader" />
      <None Include="Assets\AstarPathfindingProject\Plugins\DotNetZip\License.txt" />
@@ -227,7 +228,7 @@
      <None Include="Assets\Imports\JMO Assets\WarFX\Shaders\WFX_S Particle Add A8.shader" />
      <None Include="Assets\Imports\JMO Assets\Cartoon FX Easy Editor\CartoonFX Easy Editor Readme.txt" />
      <None Include="Assets\Imports\JMO Assets\WarFX\_Effects (Mobile, Regular Mesh)\MuzzleFlashes\!MuzzleFlash Differences.txt" />
-     <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Light.shader" />
+     <None Include="Assets\Imports\Standard Assets\Projectors\Sources\Shaders\Projector Light.shader" />
      <None Include="Assets\Imports\JMO Assets\!JMO Assets Readme.txt" />
      <None Include="Assets\AstarPathfindingProject\Readme_upgrading.txt" />
      <None Include="Assets\AstarPathfindingProject\Plugins\Clipper\License.txt" />
