@@ -151,10 +151,9 @@ public class GameController : MonoBehaviour
 			EndAllTurn();
 
 				}
-		GUI.Box(new Rect(Screen.width - 150, 100, 140, 140), new GUIContent(Players[0].name + "\n" + "HP: " + Players[0].Health + "\n" + "AP: " + Players[0].ActionPoints,  "This is player 1"), skin.box);
-		GUI.Box(new Rect(Screen.width - 150, 245, 140, 140), new GUIContent(Players[1].name + "\n" + "HP: " + Players[1].Health + "\n" + "AP: " + Players[1].ActionPoints,  "This is player 1"), skin.box);
-		GUI.Box(new Rect(Screen.width - 150, 390, 140, 140), new GUIContent(Players[2].name + "\n" + "HP: " + Players[2].Health + "\n" + "AP: " + Players[2].ActionPoints,  "This is player 1"), skin.box); 
-
+		for (int i=0; i < Players.Count; i++) {
+			GUI.Box(new Rect(Screen.width - 150, 100 + (i * 145), 140, 140), new GUIContent(Players[i].name + "\n" + "HP: " + Players[i].Health + "\n" + "AP: " + Players[i].ActionPoints), skin.box);
+				}
 		if (mPlayersTurn && mTextFadeTime > Time.time) {
 
 			GUI.Label (new Rect((Screen.width / 2) - 150, (Screen.height / 2) - 50, 300, 100), "Your Turn", skin.GetStyle("PopUpText"));
