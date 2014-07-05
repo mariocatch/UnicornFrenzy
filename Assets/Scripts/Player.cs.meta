@@ -2,7 +2,23 @@ fileFormatVersion: 2
 guid: 7a9b663521c8e11488c5ce6196805131
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - MoveIcon: {instanceID: 0}
+  - EndTurnIcon: {instanceID: 0}
+  - mGameController: {instanceID: 0}
+  - SquareMat: {instanceID: 0}
+  - mSeeker: {instanceID: 0}
+  - mAstarPath: {instanceID: 0}
+  - mEnemyTarget: {instanceID: 0}
+  - mFriendlyTarget: {instanceID: 0}
+  - mWorldAbility: {instanceID: 0}
+  - mTargetAbility: {instanceID: 0}
+  - SelectionIndicator: {instanceID: 0}
+  - ARangeDisplay: {instanceID: 0}
+  - Ability1: {instanceID: 0}
+  - Ability2: {instanceID: 0}
+  - Ability3: {instanceID: 0}
+  - Ability4: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

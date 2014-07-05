@@ -9,6 +9,8 @@ public class Player : MonoBehaviour
 
 		//GUI Variables
 		public string PlayerName;
+		public Texture MoveIcon;
+		public Texture EndTurnIcon;
 
 		//GameController
 		[HideInInspector]
@@ -148,6 +150,8 @@ public class Player : MonoBehaviour
 				mGameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameController> ();
 				PathOffset = new Vector3 (0, .1f, 0);
 				SquareMat = Resources.Load ("pathSquare", typeof(Material)) as Material;
+				MoveIcon = Resources.Load ("Move", typeof(Texture)) as Texture;
+				EndTurnIcon = Resources.Load ("EndTurn", typeof(Texture)) as Texture;
 			
 		}
 
@@ -326,11 +330,7 @@ public class Player : MonoBehaviour
 				//Activates player specific Gui elements during the respective players turn
 				if (TurnActive) {
 
-						GUI.Label (new Rect (140, 15, 80, 25), Health.ToString ());
-						GUI.Label (new Rect (225, 15, 80, 25), PlayerName);
-						GUI.Label (new Rect (310, 15, 80, 25), ActionPoints.ToString ());
-
-						if (GUI.Button (new Rect (90, 45, 80, 20), "Move") && MoveAble && !mSelectLocation && !mFTargetSelect && !mETargetSelect && !MovePhase) {
+			if (GUI.Button (new Rect ((Screen.width /2) - 200, Screen.height - 80, 64, 64), MoveIcon) && MoveAble && !mSelectLocation && !mFTargetSelect && !mETargetSelect && !MovePhase) {
 
 								MovePhase = true;
 								SelectionIndicator.SetActive (false);
@@ -338,7 +338,7 @@ public class Player : MonoBehaviour
 				
 						}
 
-						if (GUI.Button (new Rect (180, 45, 80, 20), "Ability1") && AttackAble && !MovePhase && FinishedMoving) {
+			if (GUI.Button (new Rect ((Screen.width /2) - 130, Screen.height - 80, 64, 64), Ability1.Icon) && AttackAble && !MovePhase && FinishedMoving) {
 				
 								if (ActionPoints >= Ability1.ApCost) {	
 										AbilityHandler (Ability1);
@@ -346,14 +346,14 @@ public class Player : MonoBehaviour
 	
 						}
 
-						if (GUI.Button (new Rect (270, 45, 80, 20), "Ability2") && AttackAble && !MovePhase && FinishedMoving) {
+			if (GUI.Button (new Rect ((Screen.width /2) - 60, Screen.height - 80, 64, 64), Ability2.Icon) && AttackAble && !MovePhase && FinishedMoving) {
 								if (ActionPoints >= Ability2.ApCost) {
 										AbilityHandler (Ability2);
 								}
 				
 						}
 
-						if (GUI.Button (new Rect (360, 45, 80, 20), "End Turn") && FinishedMoving) {
+			if (GUI.Button (new Rect ((Screen.width /2) + 10, Screen.height - 80, 64, 64), EndTurnIcon) && FinishedMoving) {
 				
 								EndTurn ();
 				

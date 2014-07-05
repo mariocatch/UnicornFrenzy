@@ -4,6 +4,7 @@ using System.Collections;
 [System.Serializable]
 public class PlayerAbility : MonoBehaviour {
 
+	public Texture Icon;
 	public int Range;
 	public int Damage;
 	public int APRecov;

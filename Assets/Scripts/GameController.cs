@@ -7,12 +7,14 @@ using System.Linq;
 public class GameController : MonoBehaviour
 {
 
+		public GUISkin skin;
 		public List <Player> Players;
 		public List <Enemy> Enemies;
 		private List<Player> ActivePlayers;
 		public GameObject NewPlane;
 		public Transform SpawnLocation;
 		public AstarPath aStarPath;
+		private float mTextFadeTime;
 		private float mTimeToScan;
 		private float mScanDelay = .5f;
 		private int mCurrentPlayer;
@@ -36,8 +38,9 @@ public class GameController : MonoBehaviour
 				//Starts the game with the first players turn
 				ActivePlayers = new List<Player> ();
 				AddPlayers();
+				mTextFadeTime = Time.time + 4;
 
-		mPlayersTurn = true;
+				mPlayersTurn = true;
 
 		}
 
@@ -124,6 +127,7 @@ public class GameController : MonoBehaviour
 										mEnemiesTurn = false;
 										AddPlayers();
 										mPlayersTurn = true;
+										mTextFadeTime = Time.time + 3;
 										//Players [mCurrentPlayer].StartTurn ();
 								} 
 						} else {
@@ -131,6 +135,7 @@ public class GameController : MonoBehaviour
 								mEnemiesTurn = false;
 								AddPlayers();
 								mPlayersTurn = true;
+								mTextFadeTime = Time.time + 3;
 								//Players [mCurrentPlayer].StartTurn ();
 								
 						}
@@ -139,6 +144,22 @@ public class GameController : MonoBehaviour
 		}
 
 		void OnGUI(){
+
+		if (GUI.Button (new Rect (Screen.width - 150, 80, 140, 20), "End All", skin.button) && mPlayersTurn) {
+
+			print ("ending all!");
+			EndAllTurn();
+
+				}
+		GUI.Box(new Rect(Screen.width - 150, 100, 140, 140), new GUIContent(Players[0].name + "\n" + "HP: " + Players[0].Health + "\n" + "AP: " + Players[0].ActionPoints,  "This is player 1"), skin.box);
+		GUI.Box(new Rect(Screen.width - 150, 245, 140, 140), new GUIContent(Players[1].name + "\n" + "HP: " + Players[1].Health + "\n" + "AP: " + Players[1].ActionPoints,  "This is player 1"), skin.box);
+		GUI.Box(new Rect(Screen.width - 150, 390, 140, 140), new GUIContent(Players[2].name + "\n" + "HP: " + Players[2].Health + "\n" + "AP: " + Players[2].ActionPoints,  "This is player 1"), skin.box); 
+
+		if (mPlayersTurn && mTextFadeTime > Time.time) {
+
+			GUI.Label (new Rect((Screen.width / 2) - 150, (Screen.height / 2) - 50, 300, 100), "Your Turn", skin.GetStyle("PopUpText"));
+
+				}
 
 		if (mGameOver) {
 
@@ -188,6 +209,24 @@ public class GameController : MonoBehaviour
 			}
 
 				}
+		}
+
+		public void EndAllTurn(){
+		if (!mPlayerSelected) {
+
+			ActivePlayers.Clear ();
+			mPlayersTurn = false;
+			mEnemiesTurn = true;
+			if (Enemies.Count > 0) {
+				
+				Enemies [0].StartTurn ();
+				print ("Enemy Turn!");
+				
+			}
+
+				}
+
+
 		}
 
 		public bool PlayerInActiveList(Player selectedPlayer){
