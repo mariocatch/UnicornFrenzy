@@ -181,6 +181,7 @@
      <Compile Include="Assets\Scripts\CyborgStomp.cs" />
      <Compile Include="Assets\Scripts\CyborgTauntingBlow.cs" />
      <Compile Include="Assets\Scripts\Enemy.cs" />
+     <Compile Include="Assets\Scripts\EnemyCoverBased.cs" />
      <Compile Include="Assets\Scripts\EnemySuicideBot.cs" />
      <Compile Include="Assets\Scripts\EnemyTestBoss.cs" />
      <Compile Include="Assets\Scripts\EnemyTurret.cs" />
@@ -195,6 +196,7 @@
      <Compile Include="Assets\Scripts\PlayerAbility.cs" />
      <Compile Include="Assets\Scripts\PlayerCyborg.cs" />
      <Compile Include="Assets\Scripts\PlayerEngineer.cs" />
+     <Compile Include="Assets\Scripts\PlayerInventory.cs" />
      <Compile Include="Assets\Scripts\PlayerMovementController.cs" />
      <Compile Include="Assets\Scripts\PlayerSniper.cs" />
      <Compile Include="Assets\Scripts\RoomDatabase.cs" />

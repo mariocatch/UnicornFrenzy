@@ -107,6 +107,9 @@ public class Player : MonoBehaviour
 
 		//Combat variables
 		[HideInInspector]
+		public CoverObject
+				CurrentCover;
+		[HideInInspector]
 		public bool
 				InCover;
 		[HideInInspector]

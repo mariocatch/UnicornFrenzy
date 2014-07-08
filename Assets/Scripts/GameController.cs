@@ -10,6 +10,7 @@ public class GameController : MonoBehaviour
 		public GUISkin skin;
 		public List <Player> Players;
 		public List <Enemy> Enemies;
+		public List <CoverObject> CoverObjects;
 		private List<Player> ActivePlayers;
 		public GameObject NewPlane;
 		public Transform SpawnLocation;
@@ -153,7 +154,7 @@ public class GameController : MonoBehaviour
 				}
 		for (int i=0; i < Players.Count; i++) {
 			GUI.Box(new Rect(Screen.width - 150, 100 + (i * 145), 140, 140), new GUIContent(Players[i].name + "\n" + "HP: " + Players[i].Health + "\n" + "AP: " + Players[i].ActionPoints), skin.box);
-				}
+				}  
 		if (mPlayersTurn && mTextFadeTime > Time.time) {
 
 			GUI.Label (new Rect((Screen.width / 2) - 150, (Screen.height / 2) - 50, 300, 100), "Your Turn", skin.GetStyle("PopUpText"));
