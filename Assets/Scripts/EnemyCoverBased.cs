@@ -10,6 +10,8 @@ public class EnemyCoverBased : Enemy {
 	private CoverObject CoverTarget;
 	private bool mMovePhase;
 	private bool mMoving;
+	private bool mAttacked;
+	private bool mEndingTurn;
 	private bool InCover;
 	private int mCurrentWaypoint;
 	private Seeker mSeeker;
@@ -23,6 +25,42 @@ public class EnemyCoverBased : Enemy {
 		base.Start ();
 		mSeeker = gameObject.GetComponent<Seeker> ();
 	}
+
+	public void Update(){
+
+		if (TurnActive && !mMovePhase && !mAttacked) {
+
+			if (Vector3.Distance (Target.transform.position, transform.position) < AttackRange){
+
+				BasicShot ();
+				mAttacked = true;
+				mEndingTurn = true;
+				EndTurn ();
+
+			} else {
+
+				EndTurn ();
+
+			}
+
+
+				}
+
+		if (TurnActive && mEndingTurn) {
+
+			EndTurn ();
+
+				}
+
+		}
+
+	public void BasicShot(){
+
+		int DamageDealt = (BasicAttackDamage + Random.Range (0, DamageBonus)) - DamageReducer;
+		Target.Health -= DamageDealt;
+		Instantiate (BasicAttackParticles, Target.transform.position, Target.transform.rotation);
+		print ("Attacked for " + DamageDealt);
+		}
 
 	public void OnPathComplete (Path p)
 	{
@@ -59,6 +97,7 @@ public class EnemyCoverBased : Enemy {
 				mMoving = false;
 				mCurrentWaypoint++;
 				mMovePhase = false;
+				mAttacked = false;
 				if (Target != null) {
 					
 					transform.LookAt (Target.transform.position);
@@ -71,6 +110,10 @@ public class EnemyCoverBased : Enemy {
 	public override void StartTurn ()
 	{
 		base.StartTurn ();
+		mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = true;
+		mMovePhase = true;
+
+		TurnTime = Time.time + 5;
 
 		if (Target != null) {
 
@@ -90,8 +133,6 @@ public class EnemyCoverBased : Enemy {
 		if (Target == null) {
 						EndTurn ();
 				} else {
-			Debug.Log (Target.name);
-			Debug.Log ("Finding Cover");
 			FindCover ();
 				}
 	}
@@ -125,24 +166,97 @@ public class EnemyCoverBased : Enemy {
 
 	}
 
+	public override void TakeDamage (int damage)
+	{
+		if (InCover) {
+
+						for (int i = 0; i < mGameController.Players.Count; i++) {
+
+								if (mGameController.Players [i].TurnActive) {
+
+										if (mGameController.Players [i].InCover) {
+
+												if (mGameController.Players [i].CurrentCover == CoverTarget) {
+
+														if (Physics.Linecast (mGameController.Players [i].transform.position, transform.position, CoverLayer)) {
+
+																TakeCoverDamage(damage);
+
+														} else {
+
+																base.TakeDamage (damage);
+
+														}
+
+												} else {
+
+														mGameController.Players [i].CurrentCover.gameObject.layer = 0;
+
+														if (Physics.Linecast (mGameController.Players [i].transform.position, transform.position, CoverLayer)) {
+
+															TakeCoverDamage(damage);
+
+														} else {
+
+																base.TakeDamage (damage);
+
+														}
+
+														mGameController.Players [i].CurrentCover.gameObject.layer = 11;
+
+												}
+
+										} else {
+
+												if (Physics.Linecast (mGameController.Players [i].transform.position, transform.position, CoverLayer)) {
+
+														TakeCoverDamage(damage);
+
+												} else {
+
+															base.TakeDamage (damage);
+
+												}
+
+										}
+
+								}
+						}
+
+				} else {
+
+			base.TakeDamage (damage);
+
+				}
+	}
+
+	public void TakeCoverDamage(int damage){
+
+		if (Random.Range (0, 4) > 2) {
+
+						Health -= damage;
+						CheckHealth ();
+						Debug.Log ("Took cover damage! Ow!");
+				} else {
+
+			Debug.Log ("Ha! You missed me!");
+
+				}
+		}
+
 	public void FindCover(){
 		
 		List <CoverObject> AvailableCover = new List<CoverObject>();
 
-		Debug.Log (mGameController.CoverObjects.Count);
 		for (int i = 0; i < mGameController.CoverObjects.Count; i++){
 
 			Debug.Log(Vector3.Distance(mGameController.CoverObjects[i].transform.position, transform.position));
 			if (Vector3.Distance(mGameController.CoverObjects[i].transform.position, transform.position) <= MoveRange){
 
-				Debug.Log ("Distance Check Passed!");
 				AvailableCover.Add(mGameController.CoverObjects[i]);
-				Debug.Log ("Adding cover object");
 			}
 			
 		}
-		Debug.Log ("Passed for loop");
-		Debug.Log (AvailableCover.Count);
 		if (AvailableCover.Count > 0){
 			
 			CoverTarget = AvailableCover[0];
@@ -165,7 +279,7 @@ public class EnemyCoverBased : Enemy {
 	}
 
 	public void TakeCover(){
-		Debug.Log ("Taking Cover!");
+
 		if (Target.InCover){
 			
 			if (Target.CurrentCover != CoverTarget){
@@ -183,20 +297,35 @@ public class EnemyCoverBased : Enemy {
 			if (Physics.Linecast ((Vector3)MoveableNodes[i].position + new Vector3(0,1,0), Target.transform.position, CoverLayer)){
 				Debug.Log("Point Found! Moving!");
 				MoveCharacter((Vector3)MoveableNodes[i].position);
+				mMovePhase = true;
 				InCover = true;
-				break;
-				
+				if (Target.InCover) {
+					
+					Target.CurrentCover.gameObject.layer = 11;
+					
+				}
+				return;	
 			}
 			
 		}
-
-		if (Target.InCover) {
-
-			Target.CurrentCover.gameObject.layer = 11;
-
-				}
-
 		EndTurn ();
+	}
+
+	public override void Death ()
+	{
+		base.Death ();
+		Destroy (gameObject);
+	}
+
+	public override void EndTurn ()
+	{
+		if (Time.time > TurnTime) {
+						base.EndTurn ();
+						mMovePhase = false;
+						mEndingTurn = false;
+				} else {
+						mEndingTurn = true;
+				}
 	}
 
 	public void OnConstantPathComplete (Path p)
