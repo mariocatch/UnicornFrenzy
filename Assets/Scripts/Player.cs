@@ -285,7 +285,12 @@ public class Player : MonoBehaviour
 													Inventory.AddItem(hitItem.ItemID, hitItem.ItemQuantity);
 													hitItem.RemoveObject ();
 
-												} 
+												} else if (hit.collider.gameObject.tag == "Interactable" && Vector3.Distance (hit.transform.position, transform.position) <= 8){
+
+													Debug.Log("Using Object!");
+													hit.collider.gameObject.GetComponent<InteractiveObject>().UseObject ();
+
+												}
 										}
 
 								}

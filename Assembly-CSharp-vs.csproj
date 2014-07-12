@@ -175,6 +175,7 @@
      <Compile Include="Assets\Imports\JMO Assets\WarFX\Scripts\WFX_ParticleMeshBillboard.cs" />
      <Compile Include="Assets\Imports\JMO Assets\WarFX\Spawn System\CFX_SpawnSystem.cs" />
      <Compile Include="Assets\Scripts\AstarAI.cs" />
+     <Compile Include="Assets\Scripts\BridgeSpawner.cs" />
      <Compile Include="Assets\Scripts\CameraControl.cs" />
      <Compile Include="Assets\Scripts\CoverObject.cs" />
      <Compile Include="Assets\Scripts\CreateByExplore.cs" />
@@ -190,6 +191,7 @@
      <Compile Include="Assets\Scripts\EngiTaser.cs" />
      <Compile Include="Assets\Scripts\GameController.cs" />
      <Compile Include="Assets\Scripts\GenerateWorld.cs" />
+     <Compile Include="Assets\Scripts\InteractiveObject.cs" />
      <Compile Include="Assets\Scripts\Item.cs" />
      <Compile Include="Assets\Scripts\ItemDatabase.cs" />
      <Compile Include="Assets\Scripts\ItemPickup.cs" />
