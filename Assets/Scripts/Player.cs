@@ -12,10 +12,12 @@ public class Player : MonoBehaviour
 		public Texture MoveIcon;
 		public Texture EndTurnIcon;
 
-		//GameController
+		//GameController and Inventory
 		[HideInInspector]
 		public GameController
 				mGameController;
+	[HideInInspector]
+	public PlayerInventory Inventory;
 
 		//Player stats
 		public int Strength;
@@ -32,7 +34,8 @@ public class Player : MonoBehaviour
 				SecondaryStat;
 		public int Range;
 		[HideInInspector]
-		public int MoveSpeed;
+		public int
+				MoveSpeed;
 
 		//Resource variables
 		public int Health;
@@ -42,10 +45,12 @@ public class Player : MonoBehaviour
 
 		//Resource maximums
 		[HideInInspector]
-		public int mMaxMove;
+		public int
+				mMaxMove;
 		public int MaxHealth;
 		[HideInInspector]
-		public int MaxActionPoints;
+		public int
+				MaxActionPoints;
 
 		//Navigation variables
 		[HideInInspector]
@@ -72,8 +77,9 @@ public class Player : MonoBehaviour
 		[HideInInspector]
 		public float
 				mPathLength;
-		 [HideInInspector]
-		public float mMaxPathLength;
+		[HideInInspector]
+		public float
+				mMaxPathLength;
 		[HideInInspector]
 		public AstarPath
 				mAstarPath;
@@ -151,6 +157,7 @@ public class Player : MonoBehaviour
 				mSeeker = gameObject.GetComponent<Seeker> ();
 				mAstarPath = GameObject.FindGameObjectWithTag ("PathGen").GetComponent<AstarPath> ();
 				mGameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameController> ();
+				Inventory = GameObject.FindGameObjectWithTag ("Inventory").GetComponent<PlayerInventory> ();
 				PathOffset = new Vector3 (0, .1f, 0);
 				SquareMat = Resources.Load ("pathSquare", typeof(Material)) as Material;
 				MoveIcon = Resources.Load ("Move", typeof(Texture)) as Texture;
@@ -193,24 +200,99 @@ public class Player : MonoBehaviour
 			
 						}
 
-						/*	if (Input.GetMouseButtonDown (0) && GUIUtility.hotControl == 0 && TurnActive && !MovePhase) {
+						if (Input.GetMouseButtonDown (0) && GUIUtility.hotControl == 0 && TurnActive) {
+
+								var playerPlane = new Plane (Vector3.up, transform.position);
 								Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 								RaycastHit hit;
-								if (Physics.Raycast (ray, out hit)) {
-										if (hit.collider.gameObject.tag == "Enemy") {
-					
-												mEnemyTarget = hit.collider.gameObject.GetComponent<Enemy> ();
-												print ("enemy target aquired!");
-										} else if (hit.collider.gameObject.tag == "Player") {
+								float hitdist = 0.0f;
 
-												mFriendlyTarget = hit.collider.gameObject.GetComponent<Player> ();
-												print ("friendly target aquired!");
+								if (mETargetSelect) {
+
+										if (Physics.Raycast (ray, out hit)) {
+												if (hit.collider.gameObject.tag == "Enemy" && Vector3.Distance (hit.transform.position, transform.position) <= mTargetAbility.Range) {
+							
+														mEnemyTarget = hit.collider.gameObject.GetComponent<Enemy> ();
+														print ("enemy target aquired!");
+														mTargetAbility.UseAbility (this, mEnemyTarget, PrimaryStat, SecondaryStat);
+														ARangeDisplay.enabled = false;
+														mETargetSelect = false;
+														mTargetAbility = null;
+												}
+										} 
+
+								} else if (mFTargetSelect) {
+
+										if (Physics.Raycast (ray, out hit)) {
+												if (hit.collider.gameObject.tag == "Player" && Vector3.Distance (hit.transform.position, transform.position) <= mTargetAbility.Range) {
+							
+														mFriendlyTarget = hit.collider.gameObject.GetComponent<Player> ();
+														print ("friendly target aquired!");
+														mTargetAbility.UseAbility (this, mFriendlyTarget, PrimaryStat, SecondaryStat);
+														ARangeDisplay.enabled = false;
+														mFTargetSelect = false;
+														mTargetAbility = null;
+												} 
 										}
-								}
-			
-						} */
 
-						if (Input.GetMouseButtonDown (0) && GUIUtility.hotControl == 0 && mETargetSelect) {
+								} else if (MovePhase) {
+
+										if (Physics.Raycast (ray, out hit)) {
+						
+												if (hit.collider.tag == "Ground") {
+							
+														if (playerPlane.Raycast (ray, out hitdist)) {
+																Vector3 targetPoint = ray.GetPoint (hitdist);
+																GraphNode targetNode = mAstarPath.astarData.gridGraph.GetNearest (targetPoint).node;
+																if (targetNode != null) { 
+																		GraphNode match = MoveableNodes.FirstOrDefault (x => x.position == targetNode.position);
+																		if (match != null) {
+																				MoveCharacter (targetPoint);
+																				ClearRender ();
+																				MoveAble = false;
+																				SelectionIndicator.SetActive (true);
+																		}
+																}
+														}
+												}
+										}
+
+								} else if (mSelectLocation) {
+
+										if (Physics.Raycast (ray, out hit)) {
+						
+												if (hit.collider.tag == "Ground") {
+							
+														if (playerPlane.Raycast (ray, out hitdist)) {
+																Vector3 targetPoint = ray.GetPoint (hitdist);
+								
+																if (Vector3.Distance (transform.position, targetPoint) <= mWorldAbility.Range) { 
+																		mWorldAbility.UseAbility (this, targetPoint, PrimaryStat, SecondaryStat, mGameController);
+																		ARangeDisplay.enabled = false;
+																		mWorldAbility = null;
+																		mSelectLocation = false;
+																}
+														}
+												}
+										}
+
+								} else {
+
+										if (Physics.Raycast (ray, out hit)) {
+												if (hit.collider.gameObject.tag == "Item" && Vector3.Distance (hit.transform.position, transform.position) <= 8) {
+												
+													ItemPickup hitItem = hit.collider.gameObject.GetComponent<ItemPickup>();
+													Inventory.AddItem(hitItem.ItemID, hitItem.ItemQuantity);
+													hitItem.RemoveObject ();
+
+												} 
+										}
+
+								}
+
+						}
+
+						/*if (Input.GetMouseButtonDown (0) && GUIUtility.hotControl == 0 && mETargetSelect) {
 								Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 								RaycastHit hit;
 								if (Physics.Raycast (ray, out hit)) {
@@ -271,22 +353,6 @@ public class Player : MonoBehaviour
 								}
 			
 						}
-
-						if (Input.GetMouseButtonDown (1) && TurnActive) {
-
-								if (mSelectLocation || mETargetSelect || mFTargetSelect) {
-
-										mSelectLocation = false;
-										mETargetSelect = false;
-										mFTargetSelect = false;
-										mWorldAbility = null;
-										mTargetAbility = null;
-										ARangeDisplay.enabled = false;
-										AttackAble = true;
-								}
-
-						}
-
 						if (mSelectLocation && Input.GetMouseButtonDown (0)) {
 
 								var playerPlane = new Plane (Vector3.up, transform.position);
@@ -314,6 +380,22 @@ public class Player : MonoBehaviour
 								}	
 		
 						}
+			  */
+
+						if (Input.GetMouseButtonDown (1) && TurnActive) {
+
+								if (mSelectLocation || mETargetSelect || mFTargetSelect) {
+
+										mSelectLocation = false;
+										mETargetSelect = false;
+										mFTargetSelect = false;
+										mWorldAbility = null;
+										mTargetAbility = null;
+										ARangeDisplay.enabled = false;
+										AttackAble = true;
+								}
+
+						}
 				} else {
 						ARangeDisplay.enabled = false;
 				}
@@ -333,7 +415,7 @@ public class Player : MonoBehaviour
 				//Activates player specific Gui elements during the respective players turn
 				if (TurnActive) {
 
-			if (GUI.Button (new Rect ((Screen.width /2) - 200, Screen.height - 80, 64, 64), MoveIcon) && MoveAble && !mSelectLocation && !mFTargetSelect && !mETargetSelect && !MovePhase) {
+						if (GUI.Button (new Rect ((Screen.width / 2) - 200, Screen.height - 80, 64, 64), MoveIcon) && MoveAble && !mSelectLocation && !mFTargetSelect && !mETargetSelect && !MovePhase) {
 
 								MovePhase = true;
 								SelectionIndicator.SetActive (false);
@@ -341,7 +423,7 @@ public class Player : MonoBehaviour
 				
 						}
 
-			if (GUI.Button (new Rect ((Screen.width /2) - 130, Screen.height - 80, 64, 64), Ability1.Icon) && AttackAble && !MovePhase && FinishedMoving) {
+						if (GUI.Button (new Rect ((Screen.width / 2) - 130, Screen.height - 80, 64, 64), Ability1.Icon) && AttackAble && !MovePhase && FinishedMoving) {
 				
 								if (ActionPoints >= Ability1.ApCost) {	
 										AbilityHandler (Ability1);
@@ -349,14 +431,14 @@ public class Player : MonoBehaviour
 	
 						}
 
-			if (GUI.Button (new Rect ((Screen.width /2) - 60, Screen.height - 80, 64, 64), Ability2.Icon) && AttackAble && !MovePhase && FinishedMoving) {
+						if (GUI.Button (new Rect ((Screen.width / 2) - 60, Screen.height - 80, 64, 64), Ability2.Icon) && AttackAble && !MovePhase && FinishedMoving) {
 								if (ActionPoints >= Ability2.ApCost) {
 										AbilityHandler (Ability2);
 								}
 				
 						}
 
-			if (GUI.Button (new Rect ((Screen.width /2) + 10, Screen.height - 80, 64, 64), EndTurnIcon) && FinishedMoving) {
+						if (GUI.Button (new Rect ((Screen.width / 2) + 10, Screen.height - 80, 64, 64), EndTurnIcon) && FinishedMoving) {
 				
 								EndTurn ();
 				
@@ -416,11 +498,11 @@ public class Player : MonoBehaviour
 				
 				for (int i = 0; i < mGameController.Enemies.Count; i++) {
 					
-				if (Vector3.Distance(mGameController.Enemies[i].transform.position, transform.position) < 100){
+						if (Vector3.Distance (mGameController.Enemies [i].transform.position, transform.position) < 100) {
 				
-				MoveSpeed = Speed;
-				break;
-				}
+								MoveSpeed = Speed;
+								break;
+						}
 
 				}
 				

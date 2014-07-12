@@ -308,7 +308,7 @@ public class EnemyCoverBased : Enemy {
 			}
 			
 		}
-		EndTurn ();
+		mMovePhase = false;
 	}
 
 	public override void Death ()
