@@ -35,7 +35,6 @@ public class EnemyCoverBased : Enemy {
 				BasicShot ();
 				mAttacked = true;
 				mEndingTurn = true;
-				EndTurn ();
 
 			} else {
 
@@ -48,8 +47,9 @@ public class EnemyCoverBased : Enemy {
 
 		if (TurnActive && mEndingTurn) {
 
+			if (Time.time > TurnTime){
 			EndTurn ();
-
+			}
 				}
 
 		}
@@ -190,7 +190,7 @@ public class EnemyCoverBased : Enemy {
 
 												} else {
 
-														mGameController.Players [i].CurrentCover.gameObject.layer = 0;
+							mGameController.Players [i].CurrentCover.gameObject.transform.parent.gameObject.layer = 0;
 
 														if (Physics.Linecast (mGameController.Players [i].transform.position, transform.position, CoverLayer)) {
 
@@ -202,7 +202,7 @@ public class EnemyCoverBased : Enemy {
 
 														}
 
-														mGameController.Players [i].CurrentCover.gameObject.layer = 11;
+							mGameController.Players [i].CurrentCover.transform.parent.gameObject.layer = 11;
 
 												}
 
@@ -284,7 +284,7 @@ public class EnemyCoverBased : Enemy {
 			
 			if (Target.CurrentCover != CoverTarget){
 				
-				Target.CurrentCover.gameObject.layer = 0;
+				Target.CurrentCover.gameObject.transform.parent.gameObject.layer = 0;
 				
 			}
 			
@@ -301,7 +301,7 @@ public class EnemyCoverBased : Enemy {
 				InCover = true;
 				if (Target.InCover) {
 					
-					Target.CurrentCover.gameObject.layer = 11;
+					Target.CurrentCover.gameObject.transform.parent.gameObject.layer = 11;
 					
 				}
 				return;	
@@ -319,13 +319,9 @@ public class EnemyCoverBased : Enemy {
 
 	public override void EndTurn ()
 	{
-		if (Time.time > TurnTime) {
 						base.EndTurn ();
 						mMovePhase = false;
 						mEndingTurn = false;
-				} else {
-						mEndingTurn = true;
-				}
 	}
 
 	public void OnConstantPathComplete (Path p)

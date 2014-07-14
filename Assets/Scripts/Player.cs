@@ -408,7 +408,6 @@ public class Player : MonoBehaviour
 
 		public void Death ()
 		{
-
 				mGameController.Players.Remove (this);
 				Destroy (gameObject);
 		
@@ -503,7 +502,7 @@ public class Player : MonoBehaviour
 				
 				for (int i = 0; i < mGameController.Enemies.Count; i++) {
 					
-						if (Vector3.Distance (mGameController.Enemies [i].transform.position, transform.position) < 100) {
+						if (Vector3.Distance (mGameController.Enemies [i].transform.position, transform.position) < 50) {
 				
 								MoveSpeed = Speed;
 								break;
@@ -684,12 +683,12 @@ public class Player : MonoBehaviour
 		
 				//Checks if the player is moving or not, then moves the player if they need to be
 				if (!mMoving) {
-						iTween.MoveTo (gameObject, Path.vectorPath [mCurrentWaypoint] + new Vector3 (0, 1, 0), 1.5f);
+						iTween.MoveTo (gameObject, Path.vectorPath [mCurrentWaypoint] + new Vector3 (0, 1, 0), 2f);
 						mMoving = true;
 				} else if (mMoving) {
 			
 						//If the next waypoint isn't the last one, allows for corners to be cut for smoother looking motion
-						if (Vector3.Distance (transform.position, Path.vectorPath [mCurrentWaypoint] + new Vector3 (0, 1, 0)) < 2f && mCurrentWaypoint < Path.vectorPath.Count - 1) {
+						if (Vector3.Distance (transform.position, Path.vectorPath [mCurrentWaypoint] + new Vector3 (0, 1, 0)) < 3.5f && mCurrentWaypoint < Path.vectorPath.Count - 1) {
 								mMoving = false;
 								mCurrentWaypoint++;
 						} else if (transform.position == Path.vectorPath [mCurrentWaypoint] + new Vector3 (0, 1, 0) && mCurrentWaypoint == Path.vectorPath.Count - 1) {
