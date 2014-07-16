@@ -54,6 +54,8 @@ public class Player : MonoBehaviour
 
 		//Navigation variables
 		[HideInInspector]
+		public GraphNode TargetNode;
+		[HideInInspector]
 		public List<GameObject>
 				RenderedGrid = new List<GameObject> ();
 		[HideInInspector]
@@ -89,8 +91,12 @@ public class Player : MonoBehaviour
 
 		//Turn variables
 		[HideInInspector]
+		public bool EndingTurn;	
+		[HideInInspector]
 		public bool
 				TurnActive;
+		[HideInInspector]
+		public bool TurnPaused;
 		[HideInInspector]
 		public bool
 				MovePhase;
@@ -167,6 +173,7 @@ public class Player : MonoBehaviour
 
 		public virtual void Update ()
 		{
+
 				
 				
 				if (Health <= 0) {
@@ -178,26 +185,31 @@ public class Player : MonoBehaviour
 						ActionPoints = MaxActionPoints;
 
 				}
-				if (TurnActive) {
 
+				if (EndingTurn) {
+
+				if (FinishedMoving){
+				EndTurn ();
+				}
+
+				}
+
+				if (TurnActive || TurnPaused) {
+						
 						if (!mSelectLocation && !mFTargetSelect && !mETargetSelect && !MoveAble && !AttackAble && !mMoving && FinishedMoving) {
-
+			
 								EndTurn ();
-
+			
 						}
+				}
+				
+				if (TurnActive) {
 
 		
 						if (Health > MaxHealth) {
 
 								Health = MaxHealth;
 
-						}
-
-						if (Time.time > mTurnTime && TurnActive) {
-			
-								//Ends the players turn after a certain amount of time
-								EndTurn ();
-			
 						}
 
 						if (Input.GetMouseButtonDown (0) && GUIUtility.hotControl == 0 && TurnActive) {
@@ -243,10 +255,11 @@ public class Player : MonoBehaviour
 							
 														if (playerPlane.Raycast (ray, out hitdist)) {
 																Vector3 targetPoint = ray.GetPoint (hitdist);
-																GraphNode targetNode = mAstarPath.astarData.gridGraph.GetNearest (targetPoint).node;
-																if (targetNode != null) { 
-																		GraphNode match = MoveableNodes.FirstOrDefault (x => x.position == targetNode.position);
+																TargetNode = mAstarPath.astarData.gridGraph.GetNearest (targetPoint).node;
+																if (TargetNode != null) { 
+																		GraphNode match = MoveableNodes.FirstOrDefault (x => x.position == TargetNode.position);
 																		if (match != null) {
+																				mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = true;
 																				MoveCharacter (targetPoint);
 																				ClearRender ();
 																				MoveAble = false;
@@ -290,6 +303,21 @@ public class Player : MonoBehaviour
 													Debug.Log("Using Object!");
 													hit.collider.gameObject.GetComponent<InteractiveObject>().UseObject ();
 
+												} else if (hit.collider.gameObject.tag == "Player"){
+
+												Player SelectedPlayer = hit.collider.gameObject.GetComponent<Player>();
+
+												if (mGameController.PlayerInActiveList(SelectedPlayer)){
+
+															PauseTurn ();
+								if (SelectedPlayer.TurnPaused){
+									SelectedPlayer.ResumeTurn ();
+								} else {
+									SelectedPlayer.StartTurn ();
+								}
+
+													}
+
 												}
 										}
 
@@ -297,95 +325,7 @@ public class Player : MonoBehaviour
 
 						}
 
-						/*if (Input.GetMouseButtonDown (0) && GUIUtility.hotControl == 0 && mETargetSelect) {
-								Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-								RaycastHit hit;
-								if (Physics.Raycast (ray, out hit)) {
-										if (hit.collider.gameObject.tag == "Enemy" && Vector3.Distance (hit.transform.position, transform.position) <= mTargetAbility.Range) {
 						
-												mEnemyTarget = hit.collider.gameObject.GetComponent<Enemy> ();
-												print ("enemy target aquired!");
-												mTargetAbility.UseAbility (this, mEnemyTarget, PrimaryStat, SecondaryStat);
-												ARangeDisplay.enabled = false;
-												mETargetSelect = false;
-												mTargetAbility = null;
-										}
-								}  
-						}
-
-						if (Input.GetMouseButtonDown (0) && GUIUtility.hotControl == 0 && mFTargetSelect) {
-								Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-								RaycastHit hit;
-								if (Physics.Raycast (ray, out hit)) {
-										if (hit.collider.gameObject.tag == "Player" && Vector3.Distance (hit.transform.position, transform.position) <= mTargetAbility.Range) {
-						
-												mFriendlyTarget = hit.collider.gameObject.GetComponent<Player> ();
-												print ("friendly target aquired!");
-												mTargetAbility.UseAbility (this, mFriendlyTarget, PrimaryStat, SecondaryStat);
-												ARangeDisplay.enabled = false;
-												mFTargetSelect = false;
-												mTargetAbility = null;
-										} 
-								}
-						}
-
-						if (Input.GetMouseButtonDown (0) && GUIUtility.hotControl == 0 && TurnActive && MovePhase) {
-								var playerPlane = new Plane (Vector3.up, transform.position);
-								Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-								RaycastHit hit;
-								float hitdist = 0.0f;
-			
-								//Casts a ray at the screen position to select a new point to move to
-								//will only navigate to said point if the ground is hit
-								if (Physics.Raycast (ray, out hit)) {
-				
-										if (hit.collider.tag == "Ground") {
-					
-												if (playerPlane.Raycast (ray, out hitdist)) {
-														Vector3 targetPoint = ray.GetPoint (hitdist);
-														GraphNode targetNode = mAstarPath.astarData.gridGraph.GetNearest (targetPoint).node;
-														if (targetNode != null) { 
-																GraphNode match = MoveableNodes.FirstOrDefault (x => x.position == targetNode.position);
-																if (match != null) {
-																		MoveCharacter (targetPoint);
-																		ClearRender ();
-																		MoveAble = false;
-																		SelectionIndicator.SetActive (true);
-																}
-														}
-												}
-										}
-								}
-			
-						}
-						if (mSelectLocation && Input.GetMouseButtonDown (0)) {
-
-								var playerPlane = new Plane (Vector3.up, transform.position);
-								Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-								RaycastHit hit;
-								float hitdist = 0.0f;
-			
-								//Casts a ray at the screen position to select a new point to move to
-								//will only navigate to said point if the ground is hit
-								if (Physics.Raycast (ray, out hit)) {
-				
-										if (hit.collider.tag == "Ground") {
-					
-												if (playerPlane.Raycast (ray, out hitdist)) {
-														Vector3 targetPoint = ray.GetPoint (hitdist);
-						
-														if (Vector3.Distance (transform.position, targetPoint) <= mWorldAbility.Range) { 
-																mWorldAbility.UseAbility (this, targetPoint, PrimaryStat, SecondaryStat, mGameController);
-																ARangeDisplay.enabled = false;
-																mWorldAbility = null;
-																mSelectLocation = false;
-														}
-												}
-										}
-								}	
-		
-						}
-			  */
 
 						if (Input.GetMouseButtonDown (1) && TurnActive) {
 
@@ -406,9 +346,27 @@ public class Player : MonoBehaviour
 				}
 		}
 
+		public void PauseTurn(){
+
+		TurnPaused = true;
+		SelectionIndicator.SetActive (false);
+		TurnActive = false;
+
+		}
+
+
+		public void ResumeTurn(){
+
+		TurnActive = true;
+		SelectionIndicator.SetActive (true);
+		TurnPaused = false;
+
+		}
+
 		public void Death ()
 		{
 				mGameController.Players.Remove (this);
+				mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = true;
 				Destroy (gameObject);
 		
 		}
@@ -510,7 +468,6 @@ public class Player : MonoBehaviour
 
 				}
 				
-				mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = true;
 				TurnActive = true;
 				MoveAble = true;
 				AttackAble = true;
@@ -637,10 +594,11 @@ public class Player : MonoBehaviour
 				//Ensures all phases are false and sets the players turn to false for the game controller
 				SelectionIndicator.SetActive (false);
 				ClearRender ();
-				mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = false;
+				//mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = false;
 				TurnActive = false;
+				TurnPaused = false;
 				MovePhase = false;
-				FinishedMoving = false;
+				EndingTurn = false;
 				MoveAble = false;
 				AttackAble = false;
 				mFTargetSelect = false;
@@ -652,6 +610,7 @@ public class Player : MonoBehaviour
 		{
 				//Seeks out the path to be taken, and calls back with the 'OnPathComplete' method
 				mSeeker.StartPath (transform.position, target, OnPathComplete);
+				
 		}
 	
 		public void OnPathComplete (Path p)
@@ -665,6 +624,7 @@ public class Player : MonoBehaviour
 								Path = p;
 								MovePhase = false;
 								mCurrentWaypoint = 0;
+								TargetNode.Walkable = false;
 						}
 				}
 		}

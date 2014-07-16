@@ -76,34 +76,17 @@ public class GameController : MonoBehaviour
 							Player SelectedPlayer = hit.collider.gameObject.GetComponent<Player>();
 					if (PlayerInActiveList(SelectedPlayer)){
 							mPlayerSelected = true;
+
+							if (!SelectedPlayer.TurnPaused){
 							SelectedPlayer.StartTurn ();
+							} else {
+							SelectedPlayer.ResumeTurn ();
+						}
 					}
 						} 
 					}
 				}
-				/*if (mPlayersTurn) {
-						//Cycles through player turns
-						if (Players [mCurrentPlayer].TurnActive == false) {
 
-								mCurrentPlayer++;
-
-								if (mCurrentPlayer > Players.Count - 1) {
-				
-										mCurrentPlayer = 0;
-										mPlayersTurn = false;
-										mEnemiesTurn = true;
-										if (Enemies.Count > 0) {
-
-												Enemies [0].StartTurn ();
-												print ("Enemy Turn!");
-
-										}
-				
-								} else {
-										Players [mCurrentPlayer].StartTurn ();
-								}
-						}
-				}*/
 				if (mEnemiesTurn) {
 
 
@@ -212,9 +195,13 @@ public class GameController : MonoBehaviour
 		}
 
 		public void EndAllTurn(){
-		if (!mPlayerSelected) {
 
-			ActivePlayers.Clear ();
+		for (int i=0; i < ActivePlayers.Count; i++) {
+
+			ActivePlayers[i].EndingTurn = true;
+
+				}
+			/*ActivePlayers.Clear ();
 			mPlayersTurn = false;
 			mEnemiesTurn = true;
 			if (Enemies.Count > 0) {
@@ -222,9 +209,8 @@ public class GameController : MonoBehaviour
 				Enemies [0].StartTurn ();
 				print ("Enemy Turn!");
 				
-			}
+			} */
 
-				}
 
 
 		}
