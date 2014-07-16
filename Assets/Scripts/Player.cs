@@ -157,6 +157,7 @@ public class Player : MonoBehaviour
 		public virtual void Start ()
 		{
 				SelectionIndicator.SetActive (false);
+				FinishedMoving = true;
 				mMaxMove = 20;
 				MaxActionPoints = 6;
 				mMaxPathLength = 35;
