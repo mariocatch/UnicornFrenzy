@@ -260,7 +260,6 @@ public class Player : MonoBehaviour
 																if (TargetNode != null) { 
 																		GraphNode match = MoveableNodes.FirstOrDefault (x => x.position == TargetNode.position);
 																		if (match != null) {
-																				mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = true;
 																				MoveCharacter (targetPoint);
 																				ClearRender ();
 																				MoveAble = false;
@@ -341,6 +340,14 @@ public class Player : MonoBehaviour
 										AttackAble = true;
 								}
 
+								if (MovePhase && MoveAble){
+
+									MovePhase = false;
+									SelectionIndicator.SetActive (true);
+									ClearRender ();
+					
+								}
+				
 						}
 				} else {
 						ARangeDisplay.enabled = false;
@@ -611,7 +618,7 @@ public class Player : MonoBehaviour
 		public void MoveCharacter (Vector3 target)
 		{
 				//Seeks out the path to be taken, and calls back with the 'OnPathComplete' method
-				mSeeker.StartPath (transform.position, target, OnPathComplete);
+			mSeeker.StartPath (transform.position, target, OnPathComplete);
 				
 		}
 	
@@ -664,7 +671,8 @@ public class Player : MonoBehaviour
 
 		public IEnumerator Constant ()
 		{
-				ConstantPath constPath = ConstantPath.Construct (transform.position, (MoveSpeed / 2) * 3000, OnConstantPathComplete);
+				mAstarPath.astarData.gridGraph.GetNearest (transform.position).node.Walkable = true;
+				ConstantPath constPath = ConstantPath.Construct ((transform.position - new Vector3(0,1, 0)), (MoveSpeed / 3) * 3000, OnConstantPathComplete);
 				AstarPath.StartPath (constPath);
 				yield return constPath.WaitForPath ();
 				Debug.Log (constPath.pathID + " " + constPath.allNodes.Count);
